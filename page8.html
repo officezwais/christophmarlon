@@ -1,8 +1,49 @@
 <!DOCTYPE html>
-<html><head><title>Page 8</title>
-<script>
-if(sessionStorage.getItem('allow_access')==='yes'){sessionStorage.removeItem('allow_access');document.documentElement.style.display='block';}else{sessionStorage.setItem('last_visited_page',window.location.pathname.split("/").pop());document.documentElement.style.display='none';window.location.replace('index.html');}
-</script>
-<style>html{display:none;} body{background:#FCE4EC; color:#C2185B; font-family:monospace; height:100vh; display:flex; justify-content:center; align-items:center; font-size:3rem; border:10px dashed #C2185B; box-sizing:border-box;}</style>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LXR | Manifesto</title>
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+    <style>
+        html { display: none; }
+        body { background: #f00; color: #000; font-family: 'Arial', sans-serif; margin: 0; overflow: hidden; }
+        
+        .container {
+            display: flex;
+            white-space: nowrap;
+            font-size: 15vh; /* Massive text */
+            font-weight: 900;
+            letter-spacing: -5px;
+            line-height: 1;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: scrollText 20s linear infinite;
+        }
+
+        @keyframes scrollText {
+            0% { transform: translate(0, -50%); }
+            100% { transform: translate(-50%, -50%); }
+        }
+
+        .outline { -webkit-text-stroke: 2px black; color: transparent; }
+    </style>
 </head>
-<body>PAGE 8 (Pink)</body></html>
+<body>
+    <div class="container">
+        THE INTERNET IS NOT A LIBRARY IT IS A TORRENT • WE DO NOT BROWSE WE SURVIVE • DIGITAL ART IS NOT A PICTURE IT IS A BEHAVIOR • <span class="outline">REFRESH TO ESCAPE</span> • CHAOS IS THE ONLY UI • 
+        THE INTERNET IS NOT A LIBRARY IT IS A TORRENT • WE DO NOT BROWSE WE SURVIVE • DIGITAL ART IS NOT A PICTURE IT IS A BEHAVIOR • <span class="outline">REFRESH TO ESCAPE</span> • CHAOS IS THE ONLY UI • 
+    </div>
+</body>
+</html>

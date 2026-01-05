@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LXR | Gateway</title>
+    <title>LXR | Stack</title>
 
     <script>
         if (sessionStorage.getItem('allow_access') === 'yes') {
@@ -24,232 +24,191 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #000;
-            color: #fff;
+            background-color: #1a1a1a; /* Dark concrete grey */
             height: 100vh;
             overflow: hidden;
-            font-family: 'Courier New', Courier, monospace;
-            perspective: 800px; /* The "Camera" lens */
-        }
-
-        /* --- THE 3D WORLD --- */
-        .world {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            transform: translate(-50%, -50%);
-            /* Mouse interaction will update these variables */
-            --rotX: 0deg;
-            --rotY: 0deg;
-        }
-
-        .tunnel-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            transform: rotateX(var(--rotX)) rotateY(var(--rotY));
-            transition: transform 0.1s ease-out; /* Smooth follow */
-        }
-
-        /* --- THE WALLS --- */
-        .wall {
-            position: absolute;
-            width: 2000px; /* Huge planes */
-            height: 2000px;
-            background: 
-                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
-                linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-            background-size: 100px 100px; /* The Grid Size */
-            backface-visibility: hidden;
-        }
-
-        /* Positioning the 4 walls of the tunnel */
-        .ceiling {
-            top: -1000px;
-            left: -1000px;
-            transform: rotateX(90deg) translateZ(500px);
-            animation: scrollWall 4s linear infinite;
-        }
-        .floor {
-            top: -1000px;
-            left: -1000px;
-            transform: rotateX(-90deg) translateZ(500px);
-            animation: scrollWall 4s linear infinite;
-        }
-        .left {
-            top: -1000px;
-            left: -1000px;
-            transform: rotateY(90deg) translateZ(500px);
-            animation: scrollWall 4s linear infinite;
-        }
-        .right {
-            top: -1000px;
-            left: -1000px;
-            transform: rotateY(-90deg) translateZ(500px);
-            animation: scrollWall 4s linear infinite;
-        }
-
-        /* Move the background texture to simulate flying forward */
-        @keyframes scrollWall {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100px; }
-        }
-
-        /* --- THE LOGIN TERMINAL (Floating in Center) --- */
-        .terminal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) translateZ(100px); /* Brings it closer */
-            width: 400px;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            text-align: center;
-            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
-            transform-style: preserve-3d;
-        }
-
-        .status {
-            font-size: 0.8rem;
-            color: #888;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
-        .input-line {
-            font-size: 2rem;
-            font-weight: bold;
-            border-bottom: 2px solid #fff;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
-            position: relative;
-            min-height: 40px;
-            text-shadow: 0 0 10px rgba(255,255,255,0.5);
-        }
-
-        /* Blinking Cursor */
-        .input-line::after {
-            content: "";
-            display: inline-block;
-            width: 10px;
-            height: 30px;
-            background: #fff;
-            margin-left: 5px;
-            animation: blink 1s infinite;
-            vertical-align: sub;
-        }
-
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: #333;
-            margin-top: 20px;
-            position: relative;
-        }
-        
-        .fill {
-            height: 100%;
-            width: 0%;
-            background: #fff;
-            box-shadow: 0 0 10px #fff;
-            transition: width 0.1s linear;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            perspective: 1000px;
         }
 
         .instruction {
-            margin-top: 20px;
-            font-size: 0.7rem;
+            position: absolute;
+            bottom: 40px;
             color: #666;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            pointer-events: none;
+        }
+
+        /* --- THE DECK CONTAINER --- */
+        .card-stack {
+            position: relative;
+            width: 350px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- INDIVIDUAL CARD STYLES --- */
+        .card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            box-sizing: border-box;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            
+            /* Center content */
+            justify-content: space-between;
+            
+            /* Prevent text selection */
+            user-select: none;
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        }
+
+        /* --- CARD CONTENT --- */
+        .card-header {
+            font-size: 0.8rem;
+            color: #888;
+            text-transform: uppercase;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            word-wrap: break-word;
+        }
+
+        .card-footer {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- ANIMATION CLASSES (Added via JS) --- */
+        
+        /* Fly Right */
+        .swiped-right {
+            animation: flyRight 0.6s forwards ease-in;
+            pointer-events: none; /* Can't click again */
+        }
+        
+        /* Fly Left */
+        .swiped-left {
+            animation: flyLeft 0.6s forwards ease-in;
+            pointer-events: none;
+        }
+
+        @keyframes flyRight {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(100vw, 200px) rotate(45deg); opacity: 0; }
+        }
+
+        @keyframes flyLeft {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-100vw, 200px) rotate(-45deg); opacity: 0; }
+        }
+
+        /* --- LAST CARD (REFRESH) --- */
+        .card.refresh-card {
+            background: #ccff00; /* Neon */
+            color: #000;
+            z-index: 0; /* Always at bottom */
         }
 
     </style>
 </head>
 <body>
 
-    <div class="world">
-        <div class="tunnel-container" id="tunnel">
-            <div class="wall ceiling"></div>
-            <div class="wall floor"></div>
-            <div class="wall left"></div>
-            <div class="wall right"></div>
-            
-            </div>
-    </div>
+    <div class="instruction">CLICK TO DISCARD</div>
 
-    <div class="terminal">
-        <div class="status" id="status-text">SECURE_LOGIN_V.6</div>
-        <div class="input-line" id="user-input"></div>
-        <div class="progress-bar"><div class="fill" id="fill"></div></div>
-        <div class="instruction">TYPE ANY KEY TO DECRYPT</div>
+    <div class="card-stack" id="stack">
+        
+        <div class="card refresh-card" style="z-index: 1;" onclick="location.reload()">
+            <div class="card-header">SYSTEM</div>
+            <div class="card-title">END OF<br>STACK</div>
+            <div class="card-footer">
+                <span>CLICK TO REFRESH</span>
+                <span>↺</span>
+            </div>
+        </div>
+
+        <div class="card" style="z-index: 2; transform: rotate(-2deg);">
+            <div class="card-header">PROJECT 004</div>
+            <div class="card-title">NEURAL<br>GARDEN</div>
+            <div class="card-footer">
+                <span>AI / WEBGL</span>
+                <span>2024</span>
+            </div>
+        </div>
+
+        <div class="card" style="z-index: 3; transform: rotate(3deg);">
+            <div class="card-header">PROJECT 003</div>
+            <div class="card-title">BRUTAL<br>FORMS</div>
+            <div class="card-footer">
+                <span>ARCHIVE</span>
+                <span>2023</span>
+            </div>
+        </div>
+
+        <div class="card" style="z-index: 4; transform: rotate(-1deg);">
+            <div class="card-header">PROJECT 002</div>
+            <div class="card-title">SONIC<br>YOUTH</div>
+            <div class="card-footer">
+                <span>AUDIO</span>
+                <span>2022</span>
+            </div>
+        </div>
+
+        <div class="card" style="z-index: 5; transform: rotate(1deg);">
+            <div class="card-header">PROJECT 001</div>
+            <div class="card-title">HEAVY<br>METAL</div>
+            <div class="card-footer">
+                <span>IDENTITY</span>
+                <span>2021</span>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // --- 3D MOUSE LOOK ---
-        const tunnel = document.getElementById('tunnel');
-        
-        document.addEventListener('mousemove', (e) => {
-            // Normalize mouse position (-1 to 1)
-            const x = (e.clientX / window.innerWidth) * 2 - 1;
-            const y = (e.clientY / window.innerHeight) * 2 - 1;
+        const cards = document.querySelectorAll('.card');
 
-            // Rotate the world slightly based on mouse
-            // X mouse moves Y rotation, Y mouse moves X rotation
-            const rotY = x * 20; // 20 degrees max
-            const rotX = -y * 20; 
-
-            tunnel.style.setProperty('--rotY', `${rotY}deg`);
-            tunnel.style.setProperty('--rotX', `${rotX}deg`);
-        });
-
-        // --- HACKER TYPING LOGIC ---
-        const inputEl = document.getElementById('user-input');
-        const fillEl = document.getElementById('fill');
-        const statusEl = document.getElementById('status-text');
-        
-        // A fake sequence of "code" to reveal
-        const secretCode = "ACCESS_GRANTED_LXR_PROTOCOL_INIT...";
-        let charIndex = 0;
-        let progress = 0;
-
-        document.addEventListener('keydown', (e) => {
-            // Ignore system keys
-            if (e.ctrlKey || e.altKey || e.metaKey) return;
-
-            // 1. Advance the progress bar
-            progress += 5; // 20 keystrokes to fill
-            if (progress > 100) progress = 100;
-            fillEl.style.width = `${progress}%`;
-
-            // 2. Type the "Secret Code" regardless of what they press
-            if (charIndex < secretCode.length) {
-                inputEl.innerText += secretCode[charIndex];
-                charIndex++;
-            } else {
-                // Random chars if code is done
-                inputEl.innerText += String.fromCharCode(Math.floor(Math.random() * 26) + 65);
-            }
-
-            // 3. Success State
-            if (progress === 100) {
-                statusEl.innerText = "UNLOCKED";
-                statusEl.style.color = "#00ff00";
-                inputEl.style.color = "#00ff00";
-                
-                // Optional: Auto-jump to next page or just stay "Unlocked"
-                // setTimeout(() => location.reload(), 1000); // Example
+        // Add click event to all cards EXCEPT the last one (refresh card)
+        cards.forEach(card => {
+            if (!card.classList.contains('refresh-card')) {
+                card.addEventListener('click', function() {
+                    swipeCard(this);
+                });
             }
         });
 
+        function swipeCard(card) {
+            // 50/50 chance to fly left or right
+            const randomDir = Math.random() > 0.5 ? 'swiped-right' : 'swiped-left';
+            card.classList.add(randomDir);
+        }
     </script>
 </body>
 </html>

@@ -1,8 +1,300 @@
 <!DOCTYPE html>
-<html><head><title>Page 7</title>
-<script>
-if(sessionStorage.getItem('allow_access')==='yes'){sessionStorage.removeItem('allow_access');document.documentElement.style.display='block';}else{sessionStorage.setItem('last_visited_page',window.location.pathname.split("/").pop());document.documentElement.style.display='none';window.location.replace('index.html');}
-</script>
-<style>html{display:none;} body{background:#FFF3E0; color:#E65100; font-family:serif; height:100vh; display:flex; justify-content:center; align-items:center; font-size:3rem; font-style:italic;}</style>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | Die Angewandte</title>
+
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <style>
+        html { display: none; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            cursor: crosshair;
+        }
+
+        /* --- BACKGROUND CANVAS --- */
+        #art-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* --- FOREGROUND UI --- */
+        .ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none; /* Let clicks pass to canvas if needed */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 40px;
+            box-sizing: border-box;
+            mix-blend-mode: difference; /* THE MAGIC TRICK: Inverts colors */
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-transform: uppercase;
+            font-size: 14px;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .applicant-info {
+            text-align: right;
+            line-height: 1.4;
+        }
+
+        main {
+            display: flex;
+            align-items: center;
+        }
+
+        /* --- PROJECT LIST --- */
+        .project-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            pointer-events: auto; /* Re-enable clicks for links */
+        }
+
+        .project-item {
+            font-size: clamp(3rem, 6vw, 6rem);
+            font-weight: 900;
+            line-height: 0.85;
+            letter-spacing: -2px;
+            text-transform: uppercase;
+            transition: transform 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .project-item:hover {
+            transform: translateX(20px);
+            font-style: italic;
+        }
+
+        /* Add little numbers */
+        .project-item::before {
+            content: attr(data-index);
+            font-size: 1rem;
+            position: absolute;
+            left: -30px;
+            top: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: normal;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .project-item:hover::before { opacity: 1; }
+
+        footer {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .scanline {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+    </style>
 </head>
-<body>Page 7 (Orange)</body></html>
+<body>
+
+    <canvas id="art-canvas"></canvas>
+    <div class="scanline"></div>
+
+    <div class="ui-layer">
+        <header>
+            <div>
+                Die Angewandte<br>
+                Class of Digital Art
+            </div>
+            <div class="applicant-info">
+                APPLICANT: CHRISTOPH MARLON<br>
+                SEMESTER: 2024/25<br>
+                STATUS: SUBMITTED
+            </div>
+        </header>
+
+        <main>
+            <ul class="project-list">
+                <li class="project-item" data-index="01">Generative_Bias</li>
+                <li class="project-item" data-index="02">Neural_Decay</li>
+                <li class="project-item" data-index="03">Void_Structures</li>
+                <li class="project-item" data-index="04">Algorithmic_Ego</li>
+            </ul>
+        </main>
+
+        <footer>
+            <div>
+                RENDER: WEBGL/CANVAS<br>
+                FPS: <span id="fps">60</span>
+            </div>
+            <div style="text-align: right; cursor: pointer;" onclick="location.reload()">
+                [ REFRESH_SEQUENCE ]
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        /**
+         * GENERATIVE ART SYSTEM
+         * A flow field simulation where particles leave trails.
+         * Interaction: Mouse distorts the flow vectors.
+         */
+        const canvas = document.getElementById('art-canvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        let particles = [];
+        const particleCount = 400; // Density
+        let mouse = { x: 0, y: 0 };
+
+        // Resize handling
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            
+            // Fill background black once
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, width, height);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Track Mouse
+        window.addEventListener('mousemove', e => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        // Particle Class
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = 0;
+                this.vy = 0;
+                this.life = Math.random() * 100 + 50;
+                this.color = Math.random() > 0.5 ? '#fff' : '#888'; // Monochromatic
+            }
+
+            update() {
+                // Flow field math
+                // Creates smooth noise-like movement based on sine waves
+                const angle = (Math.cos(this.x * 0.005) + Math.sin(this.y * 0.005)) * Math.PI * 2;
+                
+                // Add mouse interaction (repulsion/swirl)
+                const dx = this.x - mouse.x;
+                const dy = this.y - mouse.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                let forceX = 0;
+                let forceY = 0;
+
+                if(dist < 300) {
+                    const force = (300 - dist) / 300;
+                    forceX = (dx / dist) * force * 5; // Repel
+                    forceY = (dy / dist) * force * 5;
+                }
+
+                this.vx += Math.cos(angle) * 0.2 + forceX * 0.1;
+                this.vy += Math.sin(angle) * 0.2 + forceY * 0.1;
+
+                // Friction
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life--;
+
+                // Wrap around screen
+                if (this.x > width) this.x = 0;
+                if (this.x < 0) this.x = width;
+                if (this.y > height) this.y = 0;
+                if (this.y < 0) this.y = height;
+
+                if (this.life <= 0) this.reset();
+            }
+
+            draw() {
+                // Draw trails
+                ctx.beginPath();
+                ctx.fillStyle = this.color;
+                ctx.arc(this.x, this.y, 1.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Init Particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        // Animation Loop
+        function animate() {
+            // Fade effect: Draw a semi-transparent black rectangle over the previous frame
+            // This creates the "Trails" effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, width, height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // FPS Counter (Fake but looks technical)
+        setInterval(() => {
+            document.getElementById('fps').innerText = Math.floor(58 + Math.random() * 4);
+        }, 500);
+
+    </script>
+</body>
+</html>

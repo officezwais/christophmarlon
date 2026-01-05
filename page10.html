@@ -1,8 +1,174 @@
 <!DOCTYPE html>
-<html><head><title>Page 10</title>
-<script>
-if(sessionStorage.getItem('allow_access')==='yes'){sessionStorage.removeItem('allow_access');document.documentElement.style.display='block';}else{sessionStorage.setItem('last_visited_page',window.location.pathname.split("/").pop());document.documentElement.style.display='none';window.location.replace('index.html');}
-</script>
-<style>html{display:none;} body{background:#616161; color:#FFF; font-family:'Courier New', monospace; height:100vh; display:flex; justify-content:center; align-items:center; font-size:3rem;}</style>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | Field</title>
+
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <style>
+        html { display: none; }
+        
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #f0f0f0; /* Ultra-clean light grey */
+            font-family: 'Helvetica Neue', sans-serif;
+            cursor: none; /* Hide default cursor for immersion */
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* The Custom Cursor */
+        .cursor-dot {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ff3300; /* International Orange */
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            mix-blend-mode: multiply;
+        }
+
+        /* Overlay Text */
+        .overlay {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            pointer-events: none;
+            mix-blend-mode: difference;
+            color: white;
+            z-index: 5;
+        }
+
+        h1 {
+            font-size: 8rem;
+            line-height: 0.8;
+            margin: 0;
+            letter-spacing: -5px;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .meta {
+            font-family: 'Courier New', Courier, monospace;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 20px;
+        }
+    </style>
 </head>
-<body>PAGE 10 (System)</body></html>
+<body>
+
+    <div class="cursor-dot" id="cursor"></div>
+
+    <div class="overlay">
+        <h1>Influence<br>Field</h1>
+        <div class="meta">
+            <span>INTERACTION: VECTOR_FLOW</span>
+            <span>FPS: 60</span>
+            <span>STATE: REACTIVE</span>
+        </div>
+    </div>
+
+    <canvas id="field"></canvas>
+
+    <script>
+        const canvas = document.getElementById('field');
+        const ctx = canvas.getContext('2d');
+        const cursor = document.getElementById('cursor');
+
+        let width, height;
+        let mouse = { x: -1000, y: -1000 }; // Start off-screen
+
+        // Grid Settings
+        const spacing = 40; // Space between lines
+        const lineLength = 25; // Length of the needle
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Track Mouse
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            
+            // Move custom cursor
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        function draw() {
+            // Clear screen
+            ctx.fillStyle = '#f0f0f0';
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.strokeStyle = '#111'; // Dark lines
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+
+            // Loop through a grid
+            for (let x = 0; x < width + spacing; x += spacing) {
+                for (let y = 0; y < height + spacing; y += spacing) {
+                    
+                    // 1. Calculate angle to mouse
+                    const dx = mouse.x - x;
+                    const dy = mouse.y - y;
+                    const angle = Math.atan2(dy, dx);
+                    
+                    // 2. Calculate Distance (for optional effects)
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    
+                    // 3. Draw the line
+                    ctx.save();
+                    ctx.translate(x, y);
+                    ctx.rotate(angle);
+                    
+                    // Dynamic color based on distance?
+                    // Closer = Thicker/Darker
+                    if (dist < 300) {
+                        ctx.strokeStyle = '#000';
+                        ctx.lineWidth = 3;
+                    } else {
+                        ctx.strokeStyle = '#ccc';
+                        ctx.lineWidth = 1;
+                    }
+
+                    ctx.beginPath();
+                    // Draw an arrow or just a line
+                    ctx.moveTo(-lineLength / 2, 0);
+                    ctx.lineTo(lineLength / 2, 0);
+                    ctx.stroke();
+                    
+                    ctx.restore();
+                }
+            }
+
+            requestAnimationFrame(draw);
+        }
+
+        draw();
+    </script>
+</body>
+</html>
