@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | Projects</title>
+
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <style>
+        html { display: none; }
+
+        body {
+            margin: 0;
+            padding: 40px;
+            background-color: #ffffff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .project-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5vh;
+            width: 100%;
+            position: relative; 
+        }
+
+        .ticker-row {
+            display: flex;
+            align-items: baseline;
+            gap: 20px;
+            cursor: pointer;
+            transform-origin: top left; 
+            will-change: transform; 
+            background: white; 
+            z-index: 1;
+            padding: 5px 0;
+        }
+
+        .ticker-row.active {
+            z-index: 10; 
+        }
+
+        .project-name {
+            font-size: clamp(3rem, 6vw, 8rem);
+            font-weight: 900;
+            color: #e0e0e0; 
+            line-height: 0.9;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            transition: color 0.2s ease;
+        }
+
+        .ticker-row:hover .project-name {
+            color: #000;
+        }
+
+        .ticker-stats {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+
+        .ticker-row:hover .ticker-stats {
+            opacity: 1;
+        }
+
+        .up { color: #00c853; }   
+        .down { color: #ff3d00; } 
+        .neutral { color: #ccc; }
+
+        /* Faster animation for faster updates */
+        .animating {
+            transition: transform 0.5s cubic-bezier(0.2, 0, 0.2, 1);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="project-list" id="list">
+        
+        <div class="ticker-row" data-id="1">
+            <div class="project-name">KNOWLEDGE NAVIGATORS</div>
+            <div class="ticker-stats">
+                <span class="price">1,000.00</span>
+                <span class="pct neutral">0.00%</span>
+            </div>
+        </div>
+
+        <div class="ticker-row" data-id="2">
+            <div class="project-name">KING PINS</div>
+            <div class="ticker-stats">
+                <span class="price">1,000.00</span>
+                <span class="pct neutral">0.00%</span>
+            </div>
+        </div>
+
+        <div class="ticker-row" data-id="3">
+            <div class="project-name">GAMEBOY</div>
+            <div class="ticker-stats">
+                <span class="price">1,000.00</span>
+                <span class="pct neutral">0.00%</span>
+            </div>
+        </div>
+
+        <div class="ticker-row" data-id="4">
+            <div class="project-name">VOID WALKER</div>
+            <div class="ticker-stats">
+                <span class="price">1,000.00</span>
+                <span class="pct neutral">0.00%</span>
+            </div>
+        </div>
+
+        <div class="ticker-row" data-id="5">
+            <div class="project-name">FUTURE SYNDICATE</div>
+            <div class="ticker-stats">
+                <span class="price">1,000.00</span>
+                <span class="pct neutral">0.00%</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const list = document.getElementById('list');
+
+        function getPrice(row) {
+            return parseFloat(row.querySelector('.price').innerText.replace(/,/g, ''));
+        }
+
+        function updateRow(row) {
+            const priceEl = row.querySelector('.price');
+            const pctEl = row.querySelector('.pct');
+            
+            let currentPrice = getPrice(row);
+            
+            // HIGH VOLATILITY: -15% to +15%
+            const changePct = (Math.random() * 30) - 15; 
+            const changeAmount = currentPrice * (changePct / 100);
+            
+            let newPrice = currentPrice + changeAmount;
+            
+            // Prevent going below zero just in case
+            if (newPrice < 0) newPrice = 0;
+
+            // Update Data
+            priceEl.innerText = newPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            pctEl.innerText = (changeAmount >= 0 ? "+" : "") + changePct.toFixed(2) + "%";
+
+            // Update Colors
+            pctEl.className = 'pct'; 
+            if (changeAmount >= 0) {
+                pctEl.classList.add('up');
+            } else {
+                pctEl.classList.add('down');
+            }
+        }
+
+        // --- FLIP ANIMATION ---
+        function sortAndAnimate() {
+            const items = Array.from(list.children);
+
+            // 1. Record Start
+            const firsts = items.map(item => {
+                const rect = item.getBoundingClientRect();
+                return { el: item, top: rect.top };
+            });
+
+            // 2. Sort DOM
+            items.sort((a, b) => getPrice(b) - getPrice(a));
+            items.forEach(item => list.appendChild(item));
+
+            // 3. Record End
+            const lasts = items.map(item => {
+                const rect = item.getBoundingClientRect();
+                return { el: item, top: rect.top };
+            });
+
+            // 4. Invert
+            items.forEach((item) => {
+                const startPos = firsts.find(f => f.el === item);
+                const endPos = lasts.find(l => l.el === item);
+                const deltaY = startPos.top - endPos.top;
+
+                if (deltaY !== 0) {
+                    item.style.transform = `translateY(${deltaY}px)`;
+                    item.style.transition = 'none';
+                    item.classList.add('active');
+                }
+            });
+
+            // 5. Play (Faster animation: 0.5s)
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    items.forEach(item => {
+                        item.style.transition = 'transform 0.5s cubic-bezier(0.2, 0, 0.2, 1)';
+                        item.style.transform = '';
+                    });
+                    setTimeout(() => {
+                        items.forEach(i => i.classList.remove('active'));
+                    }, 500);
+                });
+            });
+        }
+
+        function marketLoop() {
+            const rows = document.querySelectorAll('.ticker-row');
+            
+            // Update 2 random rows for chaos
+            const r1 = rows[Math.floor(Math.random() * rows.length)];
+            const r2 = rows[Math.floor(Math.random() * rows.length)];
+            
+            updateRow(r1);
+            if(r1 !== r2) updateRow(r2);
+
+            sortAndAnimate();
+
+            // FAST UPDATES: Random delay between 1500ms and 2500ms
+            const nextUpdate = Math.floor(Math.random() * 1000) + 1500;
+            setTimeout(marketLoop, nextUpdate);
+        }
+
+        // Start almost immediately
+        setTimeout(marketLoop, 500);
+    </script>
+</body>
+</html>

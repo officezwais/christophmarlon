@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | Gateway</title>
+
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <style>
+        html { display: none; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+            perspective: 800px; /* The "Camera" lens */
+        }
+
+        /* --- THE 3D WORLD --- */
+        .world {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transform: translate(-50%, -50%);
+            /* Mouse interaction will update these variables */
+            --rotX: 0deg;
+            --rotY: 0deg;
+        }
+
+        .tunnel-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transform: rotateX(var(--rotX)) rotateY(var(--rotY));
+            transition: transform 0.1s ease-out; /* Smooth follow */
+        }
+
+        /* --- THE WALLS --- */
+        .wall {
+            position: absolute;
+            width: 2000px; /* Huge planes */
+            height: 2000px;
+            background: 
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 100px 100px; /* The Grid Size */
+            backface-visibility: hidden;
+        }
+
+        /* Positioning the 4 walls of the tunnel */
+        .ceiling {
+            top: -1000px;
+            left: -1000px;
+            transform: rotateX(90deg) translateZ(500px);
+            animation: scrollWall 4s linear infinite;
+        }
+        .floor {
+            top: -1000px;
+            left: -1000px;
+            transform: rotateX(-90deg) translateZ(500px);
+            animation: scrollWall 4s linear infinite;
+        }
+        .left {
+            top: -1000px;
+            left: -1000px;
+            transform: rotateY(90deg) translateZ(500px);
+            animation: scrollWall 4s linear infinite;
+        }
+        .right {
+            top: -1000px;
+            left: -1000px;
+            transform: rotateY(-90deg) translateZ(500px);
+            animation: scrollWall 4s linear infinite;
+        }
+
+        /* Move the background texture to simulate flying forward */
+        @keyframes scrollWall {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100px; }
+        }
+
+        /* --- THE LOGIN TERMINAL (Floating in Center) --- */
+        .terminal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) translateZ(100px); /* Brings it closer */
+            width: 400px;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+        }
+
+        .status {
+            font-size: 0.8rem;
+            color: #888;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .input-line {
+            font-size: 2rem;
+            font-weight: bold;
+            border-bottom: 2px solid #fff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            min-height: 40px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* Blinking Cursor */
+        .input-line::after {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 30px;
+            background: #fff;
+            margin-left: 5px;
+            animation: blink 1s infinite;
+            vertical-align: sub;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #333;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        .fill {
+            height: 100%;
+            width: 0%;
+            background: #fff;
+            box-shadow: 0 0 10px #fff;
+            transition: width 0.1s linear;
+        }
+
+        .instruction {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="world">
+        <div class="tunnel-container" id="tunnel">
+            <div class="wall ceiling"></div>
+            <div class="wall floor"></div>
+            <div class="wall left"></div>
+            <div class="wall right"></div>
+            
+            </div>
+    </div>
+
+    <div class="terminal">
+        <div class="status" id="status-text">SECURE_LOGIN_V.6</div>
+        <div class="input-line" id="user-input"></div>
+        <div class="progress-bar"><div class="fill" id="fill"></div></div>
+        <div class="instruction">TYPE ANY KEY TO DECRYPT</div>
+    </div>
+
+    <script>
+        // --- 3D MOUSE LOOK ---
+        const tunnel = document.getElementById('tunnel');
+        
+        document.addEventListener('mousemove', (e) => {
+            // Normalize mouse position (-1 to 1)
+            const x = (e.clientX / window.innerWidth) * 2 - 1;
+            const y = (e.clientY / window.innerHeight) * 2 - 1;
+
+            // Rotate the world slightly based on mouse
+            // X mouse moves Y rotation, Y mouse moves X rotation
+            const rotY = x * 20; // 20 degrees max
+            const rotX = -y * 20; 
+
+            tunnel.style.setProperty('--rotY', `${rotY}deg`);
+            tunnel.style.setProperty('--rotX', `${rotX}deg`);
+        });
+
+        // --- HACKER TYPING LOGIC ---
+        const inputEl = document.getElementById('user-input');
+        const fillEl = document.getElementById('fill');
+        const statusEl = document.getElementById('status-text');
+        
+        // A fake sequence of "code" to reveal
+        const secretCode = "ACCESS_GRANTED_LXR_PROTOCOL_INIT...";
+        let charIndex = 0;
+        let progress = 0;
+
+        document.addEventListener('keydown', (e) => {
+            // Ignore system keys
+            if (e.ctrlKey || e.altKey || e.metaKey) return;
+
+            // 1. Advance the progress bar
+            progress += 5; // 20 keystrokes to fill
+            if (progress > 100) progress = 100;
+            fillEl.style.width = `${progress}%`;
+
+            // 2. Type the "Secret Code" regardless of what they press
+            if (charIndex < secretCode.length) {
+                inputEl.innerText += secretCode[charIndex];
+                charIndex++;
+            } else {
+                // Random chars if code is done
+                inputEl.innerText += String.fromCharCode(Math.floor(Math.random() * 26) + 65);
+            }
+
+            // 3. Success State
+            if (progress === 100) {
+                statusEl.innerText = "UNLOCKED";
+                statusEl.style.color = "#00ff00";
+                inputEl.style.color = "#00ff00";
+                
+                // Optional: Auto-jump to next page or just stay "Unlocked"
+                // setTimeout(() => location.reload(), 1000); // Example
+            }
+        });
+
+    </script>
+</body>
+</html>

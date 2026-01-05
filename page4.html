@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | System 7</title>
+
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <style>
+        html { display: none; }
+
+        /* --- RETRO MAC STYLES --- */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background-color: #808080;
+            /* Classic 1px checkerboard dither pattern */
+            background-image: 
+                linear-gradient(45deg, #bbb 25%, transparent 25%, transparent 75%, #bbb 75%, #bbb),
+                linear-gradient(45deg, #bbb 25%, transparent 25%, transparent 75%, #bbb 75%, #bbb);
+            background-size: 4px 4px;
+            background-position: 0 0, 2px 2px;
+            font-family: 'Geneva', 'Verdana', sans-serif;
+            font-size: 12px;
+            user-select: none;
+        }
+
+        /* --- MENU BAR --- */
+        .menubar {
+            height: 22px;
+            background: #ffffff;
+            border-bottom: 1px solid #000;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            box-shadow: 0 1px 0 #fff;
+            position: relative;
+            z-index: 100;
+        }
+
+        .menu-item {
+            padding: 0 12px;
+            cursor: default;
+        }
+        .menu-item:first-child {
+            padding-left: 0;
+            font-size: 16px; /* Apple logo size */
+        }
+        .menu-item:active {
+            background: #000;
+            color: #fff;
+        }
+
+        /* --- DESKTOP ICONS --- */
+        .icon-grid {
+            position: absolute;
+            top: 40px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: flex-end;
+        }
+
+        .desktop-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 60px;
+            cursor: pointer;
+        }
+
+        .icon-img {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border: 1px solid #000;
+            box-shadow: 1px 1px 0 #000;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        /* Trash specific style */
+        .trash .icon-img { background: #fff; border-radius: 0 0 2px 2px; }
+
+        .icon-label {
+            background: #fff;
+            border: 1px solid #fff; /* Fake border for spacing */
+            padding: 0 2px;
+            text-align: center;
+        }
+        
+        .desktop-icon:active .icon-img {
+            filter: invert(100%);
+        }
+        .desktop-icon:active .icon-label {
+            background: #000;
+            color: #fff;
+        }
+
+        /* --- WINDOW SYSTEM --- */
+        .window {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 250px;
+            background: #fff;
+            border: 1px solid #000;
+            box-shadow: 2px 2px 0 #000; /* Retro hard shadow */
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-bar {
+            height: 20px;
+            border-bottom: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: #fff;
+        }
+
+        /* The Horizontal Lines in Title Bar */
+        .title-bar::before {
+            content: "";
+            position: absolute;
+            top: 4px;
+            left: 24px;
+            right: 24px;
+            height: 12px;
+            background-image: linear-gradient(#000 1px, transparent 1px);
+            background-size: 100% 2px;
+            z-index: 1;
+        }
+
+        .title-text {
+            background: #fff;
+            padding: 0 8px;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+        }
+
+        .close-box {
+            position: absolute;
+            left: 4px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #000;
+            background: #fff;
+            box-shadow: inset 1px 1px 0 #fff; /* Bevel effect */
+        }
+        .close-box:active { background: #000; }
+
+        .content-area {
+            flex: 1;
+            padding: 20px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .btn-retro {
+            margin-top: 20px;
+            border: 1px solid #000;
+            background: #fff;
+            box-shadow: 2px 2px 0 #000;
+            padding: 5px 15px;
+            font-family: inherit;
+            cursor: pointer;
+        }
+        .btn-retro:active {
+            transform: translate(2px, 2px);
+            box-shadow: none;
+            background: #000;
+            color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="menubar">
+        <div class="menu-item"></div> <div class="menu-item" style="font-weight:bold;">File</div>
+        <div class="menu-item">Edit</div>
+        <div class="menu-item">View</div>
+        <div class="menu-item">Special</div>
+        <div class="menu-item" style="margin-left:auto;">10:24 AM</div>
+    </div>
+
+    <div class="icon-grid">
+        <div class="desktop-icon">
+            <div class="icon-img">💾</div>
+            <div class="icon-label">Macintosh HD</div>
+        </div>
+        <div class="desktop-icon">
+            <div class="icon-img">📁</div>
+            <div class="icon-label">Projects</div>
+        </div>
+        <div class="desktop-icon trash" style="margin-top: 200px;">
+            <div class="icon-img">🗑️</div>
+            <div class="icon-label">Trash</div>
+        </div>
+    </div>
+
+    <div class="window">
+        <div class="title-bar">
+            <div class="close-box"></div>
+            <div class="title-text">Welcome to LXR</div>
+        </div>
+        <div class="content-area">
+            <div style="font-size: 30px; margin-bottom: 10px;">👋</div>
+            <p><strong>System 7.5.3</strong></p>
+            <p>You have reached Page 4.</p>
+            <p>Memory: 1024K Available</p>
+            
+            <button class="btn-retro" onclick="location.reload()">Restart Finder (Refresh)</button>
+        </div>
+    </div>
+
+</body>
+</html>

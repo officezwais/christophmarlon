@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | Index</title>
+
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <style>
+        html { display: none; }
+
+        :root {
+            --neon: #ccff00; /* That acid yellow/green from your ref */
+            --border: 2px solid #000;
+            --bg: #f4f4f4;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: #000;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- HEADER SECTION --- */
+        .header-strip {
+            background-color: var(--neon);
+            border-bottom: var(--border);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -2px;
+            line-height: 0.9;
+        }
+
+        .meta-tag {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            border: 2px solid #000;
+            padding: 5px 10px;
+            background: #fff;
+            box-shadow: 4px 4px 0px #000;
+        }
+
+        /* --- THE GRID --- */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr); /* 12 Column System */
+            width: 100%;
+            border-bottom: var(--border);
+        }
+
+        .cell {
+            border-right: var(--border);
+            border-bottom: var(--border);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 250px;
+            position: relative;
+            background: #fff;
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        /* Cell Hover Effect (Invert) */
+        .cell:hover {
+            background: #000;
+            color: var(--neon);
+        }
+        .cell:hover .cell-number {
+            border-color: var(--neon);
+            color: #000;
+            background: var(--neon);
+        }
+
+        /* --- GRID SPANS --- */
+        /* Mix of widths to match the "organized chaos" look */
+        .span-12 { grid-column: span 12; }
+        .span-6 { grid-column: span 6; }
+        .span-4 { grid-column: span 4; }
+        .span-3 { grid-column: span 3; }
+
+        /* Mobile fallback */
+        @media (max-width: 900px) {
+            .span-6, .span-4, .span-3 { grid-column: span 12; }
+        }
+
+        /* --- TYPOGRAPHY INSIDE CELLS --- */
+        .cell-number {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            border: 1px solid #000;
+            display: inline-block;
+            padding: 2px 6px;
+            align-self: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .cell-headline {
+            font-size: 2rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            line-height: 0.95;
+            margin-bottom: 10px;
+        }
+
+        .cell-desc {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-width: 90%;
+        }
+
+        /* --- BIG TEXT SECTION --- */
+        .marquee-section {
+            border-bottom: var(--border);
+            overflow: hidden;
+            white-space: nowrap;
+            background: #000;
+            color: #fff;
+            padding: 20px 0;
+        }
+        
+        .scrolling-text {
+            font-size: 8rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            animation: scroll 20s linear infinite;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* --- STICKER ELEMENT --- */
+        /* Like the "Under Construction" tape in your reference */
+        .sticker {
+            position: fixed;
+            bottom: 50px;
+            right: -20px;
+            background: var(--neon);
+            color: #000;
+            padding: 10px 100px;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 1.5rem;
+            border: 2px solid #000;
+            transform: rotate(-15deg);
+            z-index: 50;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header-strip">
+        <div class="header-title">ARCHIVE_V.4</div>
+        <div class="meta-tag">STATUS: ONLINE</div>
+    </div>
+
+    <div class="grid-container">
+        
+        <div class="cell span-12" style="background-color: #f9f9f9; min-height: 150px;">
+            <div class="cell-number">00</div>
+            <div class="cell-headline" style="font-size: 4rem;">SELECTED WORKS<br>& EXPERIMENTS</div>
+        </div>
+
+        <div class="cell span-6">
+            <div class="cell-number">01</div>
+            <div class="cell-headline">HOW DO YOU DESIGN<br>WITHOUT EGO?</div>
+            <div class="cell-desc">Exploration into anonymous architecture and utility-first frameworks.</div>
+        </div>
+        <div class="cell span-6">
+            <div class="cell-number">02</div>
+            <div class="cell-headline">THE TYPOGRAPHY<br>OF SILENCE.</div>
+            <div class="cell-desc">Using whitespace as the primary active ingredient in visual communication.</div>
+        </div>
+
+        <div class="cell span-4">
+            <div class="cell-number">03</div>
+            <div class="cell-headline">REPA<br>RATIONS</div>
+            <div class="cell-desc">Community-driven design systems.</div>
+        </div>
+        <div class="cell span-4">
+            <div class="cell-number">04</div>
+            <div class="cell-headline">ANTI<br>DESIGN</div>
+            <div class="cell-desc">Breaking the grid to find new forms.</div>
+        </div>
+        <div class="cell span-4">
+            <div class="cell-number">05</div>
+            <div class="cell-headline">RAW<br>DATA</div>
+            <div class="cell-desc">Visualizing complexity without simplification.</div>
+        </div>
+
+        <div class="cell span-12" style="padding: 0; border: none;">
+            <div class="marquee-section">
+                <div class="scrolling-text">
+                    WORK IN PROGRESS • WORK IN PROGRESS • WORK IN PROGRESS • WORK IN PROGRESS • 
+                </div>
+            </div>
+        </div>
+
+        <div class="cell span-3">
+            <div class="cell-number">A</div>
+            <div class="cell-headline">TYPE</div>
+        </div>
+        <div class="cell span-3">
+            <div class="cell-number">B</div>
+            <div class="cell-headline">CODE</div>
+        </div>
+        <div class="cell span-3">
+            <div class="cell-number">C</div>
+            <div class="cell-headline">FORM</div>
+        </div>
+        <div class="cell span-3">
+            <div class="cell-number">D</div>
+            <div class="cell-headline">VOID</div>
+        </div>
+
+    </div>
+
+    <div class="sticker">
+        UNDER CONSTRUCTION
+    </div>
+
+</body>
+</html>

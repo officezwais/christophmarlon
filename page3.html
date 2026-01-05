@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | Whiteboard</title>
+
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <style>
+        html { display: none; }
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #f4f4f4; /* Whiteboard off-white */
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif; /* Trashy handwritten font */
+            cursor: crosshair; /* Marker cursor feel */
+            user-select: none;
+        }
+
+        /* The Canvas Layer (Top) */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+
+        /* The Content Layer (Bottom) */
+        .content-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none; /* Let clicks pass through to canvas */
+        }
+
+        .instruction {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #888;
+            font-size: 1.2rem;
+            opacity: 0.6;
+        }
+
+        /* The "Links" you draw around */
+        .wb-item {
+            position: absolute;
+            padding: 10px 20px;
+            color: #333;
+            font-size: 2rem;
+            font-weight: bold;
+            letter-spacing: -1px;
+            border: 2px solid transparent; /* Hidden hitbox visual for debug */
+            transform: rotate(-2deg);
+        }
+
+        /* Random rotations for natural look */
+        .wb-item:nth-child(2) { transform: rotate(3deg); }
+        .wb-item:nth-child(3) { transform: rotate(-5deg); }
+        .wb-item:nth-child(4) { transform: rotate(1deg); }
+
+    </style>
+</head>
+<body>
+
+    <div class="instruction">
+        > DRAW A CIRCLE AROUND A TARGET TO JUMP
+    </div>
+
+    <div class="content-layer">
+        <div class="wb-item" data-target="page1.html" style="top: 20%; left: 15%;">PIXEL HORSE</div>
+        <div class="wb-item" data-target="page2.html" style="top: 30%; right: 15%;">STOCK MARKET</div>
+        <div class="wb-item" data-target="page4.html" style="top: 60%; left: 30%;">YELLOW ZONE</div>
+        <div class="wb-item" data-target="page5.html" style="bottom: 15%; right: 25%;">THE VOID</div>
+        <div class="wb-item" data-target="page6.html" style="bottom: 25%; left: 10%;">DARK MODE</div>
+    </div>
+
+    <canvas id="board"></canvas>
+
+    <script>
+        const canvas = document.getElementById('board');
+        const ctx = canvas.getContext('2d');
+        const items = document.querySelectorAll('.wb-item');
+
+        // Resize Canvas to Full Screen
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Marker Style
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#0000aa'; /* Blue Marker Color */
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Drawing State
+        let isDrawing = false;
+        let points = []; // Store the path of the current stroke
+
+        // --- MOUSE EVENTS ---
+        canvas.addEventListener('mousedown', startDraw);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', endDraw);
+
+        // --- TOUCH EVENTS (Mobile support) ---
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Stop scroll
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent("mousedown", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent("mousemove", {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        });
+        canvas.addEventListener('touchend', (e) => {
+            const mouseEvent = new MouseEvent("mouseup", {});
+            canvas.dispatchEvent(mouseEvent);
+        });
+
+        function startDraw(e) {
+            isDrawing = true;
+            points = []; // Clear previous stroke data
+            
+            // Visuals: Start a new path (keeps old drawings on screen though)
+            // If you want to clear the board every time, uncomment: 
+            // ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.beginPath();
+            ctx.moveTo(e.clientX, e.clientY);
+            points.push({x: e.clientX, y: e.clientY});
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            
+            ctx.lineTo(e.clientX, e.clientY);
+            ctx.stroke();
+            points.push({x: e.clientX, y: e.clientY});
+        }
+
+        function endDraw() {
+            if (!isDrawing) return;
+            isDrawing = false;
+            ctx.closePath();
+
+            checkSelection();
+        }
+
+        // --- COLLISION LOGIC ---
+        function checkSelection() {
+            // 1. Calculate Bounding Box of the drawn stroke
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            
+            points.forEach(p => {
+                if (p.x < minX) minX = p.x;
+                if (p.x > maxX) maxX = p.x;
+                if (p.y < minY) minY = p.y;
+                if (p.y > maxY) maxY = p.y;
+            });
+
+            // 2. Check if any text item is INSIDE that box
+            items.forEach(item => {
+                const rect = item.getBoundingClientRect();
+                
+                // Get center point of the text item
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                // Hit Test: Is the center of the text inside the stroke's bounding box?
+                // AND is the stroke big enough to reasonably contain it?
+                const isInsideX = centerX > minX && centerX < maxX;
+                const isInsideY = centerY > minY && centerY < maxY;
+                
+                if (isInsideX && isInsideY) {
+                    // TRIGGER NAVIGATION
+                    const targetPage = item.getAttribute('data-target');
+                    triggerJump(item, targetPage);
+                }
+            });
+        }
+
+        function triggerJump(element, url) {
+            // Visual Feedback: Highlight the text
+            element.style.color = 'red';
+            element.style.textDecoration = 'line-through';
+            
+            // Short delay then jump
+            setTimeout(() => {
+                // Must set allow_access for the router logic to accept the jump
+                sessionStorage.setItem('allow_access', 'yes');
+                window.location.href = url;
+            }, 300);
+        }
+
+    </script>
+</body>
+</html>

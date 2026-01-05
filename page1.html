@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>christoph marlon</title>
+
+    <script>
+        // Check for the "One-Time Ticket"
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            // Ticket found! Consume it.
+            sessionStorage.removeItem('allow_access');
+            // Reveal the page
+            document.documentElement.style.display = 'block';
+        } else {
+            // No Ticket? (User hit Refresh) -> KICK OUT
+            
+            // 1. Save this page name so we don't return to it immediately
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+
+            // 2. Hide and Redirect to Router
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <style>
+        /* CRITICAL: Hide page by default to prevent flashing before script runs */
+        html { display: none; }
+
+        /* Reset and Body Styles */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000; /* Black Background */
+            color: #ffffff; /* White Text */
+            /* Switched to a system sans-serif stack for a bolder, brutalist feel */
+            font-family: 'Arial Black', 'Helvetica Neue', Helvetica, sans-serif; 
+            overflow: hidden; 
+        }
+
+        /* Flexbox to center the horse */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Top Left: Christoph Marlon */
+        .header-text {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+            
+            /* Brutalist Styling */
+            font-size: 42px;       /* Much larger */
+            font-weight: 900;      /* Maximum boldness */
+            letter-spacing: -2px;  /* Tighter spacing for impact */
+            line-height: 1;
+            z-index: 10;
+        }
+
+        /* Top Right: Portfolio */
+        .portfolio-text {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            
+            /* Brutalist Styling - slightly smaller but still bold */
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            text-decoration: none; /* No default underline */
+            color: #ffffff;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        /* Optional: Hover effect for portfolio to make it feel interactive */
+        .portfolio-text:hover {
+            text-decoration: underline;
+            text-decoration-thickness: 4px; /* Chunky underline */
+        }
+
+        /* The Horse Animation Styling */
+        .horse-container img {
+            /* Invert colors: Black dots -> White dots */
+            filter: invert(100%); 
+            image-rendering: pixelated; 
+            width: 300px; 
+            height: auto;
+        }
+
+        /* Responsive adjustments for mobile */
+        @media (max-width: 600px) {
+            .header-text {
+                font-size: 28px;
+                left: 20px;
+                top: 20px;
+            }
+            .portfolio-text {
+                font-size: 18px;
+                right: 20px;
+                top: 25px;
+            }
+            .horse-container img {
+                width: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-text">
+        christoph marlon
+    </div>
+
+    <a href="#" class="portfolio-text">
+        portfolio
+    </a>
+
+    <div class="horse-container">
+        <img src="horse.gif" alt="Pixel Horse Running">
+    </div>
+
+</body>
+</html>
