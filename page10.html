@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LXR | Field</title>
+    <title>LXR | 10. FIELD</title>
 
     <script>
         if (sessionStorage.getItem('allow_access') === 'yes') {
@@ -20,155 +20,240 @@
 
     <style>
         html { display: none; }
-        
+
         body {
             margin: 0;
-            overflow: hidden;
-            background-color: #f0f0f0; /* Ultra-clean light grey */
-            font-family: 'Helvetica Neue', sans-serif;
-            cursor: none; /* Hide default cursor for immersion */
+            padding: 0;
+            background-color: #000;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: hidden;
+            overflow-y: auto; /* Allow scrolling for the "full page" feel */
         }
 
-        canvas {
-            display: block;
-        }
-
-        /* The Custom Cursor */
-        .cursor-dot {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: #ff3300; /* International Orange */
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-            mix-blend-mode: multiply;
-        }
-
-        /* Overlay Text */
-        .overlay {
-            position: absolute;
-            bottom: 40px;
-            left: 40px;
-            pointer-events: none;
-            mix-blend-mode: difference;
-            color: white;
-            z-index: 5;
-        }
-
-        h1 {
-            font-size: 8rem;
-            line-height: 0.8;
-            margin: 0;
-            letter-spacing: -5px;
-            font-weight: 900;
-            text-transform: uppercase;
-        }
-
-        .meta {
-            font-family: 'Courier New', Courier, monospace;
-            margin-top: 20px;
-            font-size: 0.9rem;
+        /* --- THE CLOUD CONTAINER --- */
+        .tag-cloud {
             display: flex;
-            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center; /* Center horizontally */
+            align-content: flex-start; /* Start from top */
+            gap: 12px;
+            width: 100%;
+            min-height: 100vh;
+            padding: 40px; /* Padding around the edges */
+            box-sizing: border-box;
         }
+
+        /* --- TAG BASE STYLES --- */
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 44px; /* Slightly taller for impact */
+            padding: 0 25px;
+            border-radius: 22px;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, filter 0.2s ease;
+            white-space: nowrap;
+            box-sizing: border-box;
+            position: relative;
+            /* Allow them to flex slightly to fill gaps nicely */
+            flex: 0 1 auto; 
+        }
+
+        .tag:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            filter: brightness(1.2);
+        }
+
+        .tag svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            fill: currentColor;
+        }
+
+        /* --- TAG VARIANTS (Gradients & Outlines) --- */
+        
+        /* Gradients */
+        .g-purple { background: linear-gradient(135deg, #b000ff, #7700ff); }
+        .g-orange { background: linear-gradient(135deg, #ff8800, #ff4400); }
+        .g-green  { background: linear-gradient(135deg, #00ff88, #00aa44); color: #000; }
+        .g-pink   { background: linear-gradient(135deg, #ff44aa, #cc0066); }
+        .g-blue   { background: linear-gradient(135deg, #00ccff, #0066ff); }
+        .g-teal   { background: linear-gradient(135deg, #00ffcc, #009999); color: #000; }
+        .g-yellow { background: linear-gradient(135deg, #ffdd00, #ffaa00); color: #000; }
+        .g-red    { background: linear-gradient(135deg, #ff2244, #aa0022); }
+        
+        /* Outlines */
+        .outline {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #ddd;
+        }
+        .outline:hover {
+            border-color: #fff;
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+        }
+
+        /* Special fills for brands */
+        .f-twitter { background: #1DA1F2; }
+        .f-fb { background: transparent; border: 1px solid #4267B2; color: #4267B2; }
+        .f-youtube { background: transparent; border: 1px solid #FF0000; color: #FF0000; }
+        .f-insta { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%); }
+        .f-tiktok { background: #000; border: 1px solid #333; }
+
+        /* Icon only circles */
+        .tag.circle {
+            width: 44px;
+            padding: 0;
+            border-radius: 50%;
+            flex: 0 0 44px; /* Rigid size for circles */
+        }
+        .tag.circle svg { margin: 0; }
+
+        /* Rectangles */
+        .tag.rect {
+            border-radius: 6px;
+        }
+
+        /* --- ANIMATION --- */
+        .tag {
+            opacity: 0;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.5); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="cursor-dot" id="cursor"></div>
+    <div class="tag-cloud">
+        
+        <div class="tag g-purple" style="animation-delay: 0.0s;">hashtag</div>
+        <div class="tag g-orange" style="animation-delay: 0.02s;">entertainment</div>
+        <div class="tag f-twitter circle" style="animation-delay: 0.04s;">
+            <svg viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg>
+        </div>
+        <div class="tag g-green" style="animation-delay: 0.06s;">careers</div>
+        <div class="tag g-red" style="animation-delay: 0.08s;">movie</div>
+        <div class="tag outline" style="animation-delay: 0.1s; border-color: #00ffff; color: #00ffff; box-shadow: 0 0 10px rgba(0,255,255,0.2);">video games</div>
+        <div class="tag rect outline" style="background: #fff; color: #000; border: none; animation-delay: 0.12s;">technology</div>
+        <div class="tag f-youtube" style="animation-delay: 0.14s;">
+            <svg viewBox="0 0 24 24"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor"></polygon></svg>
+        </div>
+        <div class="tag outline" style="animation-delay: 0.16s;">events</div>
+        <div class="tag g-blue" style="background: linear-gradient(90deg, #ddd, #fff); color:#000; animation-delay: 0.18s;">concerts</div>
+        <div class="tag g-purple" style="animation-delay: 0.2s;">music</div>
+        <div class="tag rect outline" style="animation-delay: 0.22s;">playstation</div>
+        <div class="tag rect" style="background: #fff; color: #000; border-radius: 20px; animation-delay: 0.24s;">hollywood</div>
+        <div class="tag outline" style="animation-delay: 0.26s;">xbox series x</div>
+        <div class="tag circle outline" style="animation-delay: 0.28s;">#</div>
+        <div class="tag outline" style="animation-delay: 0.3s;">facebook</div>
+        <div class="tag circle f-fb" style="border:none; background:#1877F2; color:#fff; animation-delay: 0.32s;">f</div>
+        <div class="tag g-blue" style="animation-delay: 0.34s;">academy awards</div>
+        <div class="tag outline" style="border-radius: 4px; animation-delay: 0.36s;">grammy</div>
+        <div class="tag circle outline" style="background:#fff; color:#000; width:auto; padding:0 10px; animation-delay: 0.38s;">art</div>
+        <div class="tag outline" style="animation-delay: 0.4s;">&longrightarrow;</div>
+        <div class="tag g-orange" style="animation-delay: 0.42s;">interviews</div>
 
-    <div class="overlay">
-        <h1>Influence<br>Field</h1>
-        <div class="meta">
-            <span>INTERACTION: VECTOR_FLOW</span>
-            <span>FPS: 60</span>
-            <span>STATE: REACTIVE</span>
+        <div class="tag g-pink" style="animation-delay: 0.44s;">stories</div>
+        <div class="tag outline" style="animation-delay: 0.46s;">tiktok</div>
+        <div class="tag circle f-tiktok" style="animation-delay: 0.48s;">
+             <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"></path></svg>
+        </div>
+        <div class="tag rect outline" style="animation-delay: 0.5s;">fashion</div>
+        <div class="tag g-green" style="animation-delay: 0.52s;">celebrity</div>
+        <div class="tag g-teal" style="animation-delay: 0.54s;">Telegram</div>
+        <div class="tag circle g-blue" style="animation-delay: 0.56s;"><svg viewBox="0 0 24 24" style="margin:0;"><path d="M21.5 2L2 9.5l7 3 2.5 9 3.5-5.5 5.5 3.5L21.5 2z"></path></svg></div>
+        <div class="tag g-yellow" style="animation-delay: 0.58s;">bollywood</div>
+        <div class="tag rect outline" style="animation-delay: 0.6s;">mobile</div>
+        <div class="tag g-green" style="animation-delay: 0.62s;">whatsapp</div>
+        <div class="tag g-yellow" style="animation-delay: 0.64s;">Instagram</div>
+        <div class="tag circle f-insta" style="animation-delay: 0.66s; width:30px; height:30px;"></div>
+        <div class="tag outline" style="border-radius:20px; animation-delay: 0.68s;">apple</div>
+        <div class="tag outline" style="width: 100px; animation-delay: 0.7s;">&longleftarrow;</div>
+        <div class="tag g-blue" style="animation-delay: 0.72s;">microsoft</div>
+        <div class="tag rect" style="padding:0; width: 44px; height: 44px; background: #000; animation-delay: 0.74s;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:2px; width:100%; height:100%;">
+                <div style="background:#f25022"></div><div style="background:#7fba00"></div>
+                <div style="background:#00a4ef"></div><div style="background:#ffb900"></div>
+            </div>
+        </div>
+        <div class="tag g-pink" style="animation-delay: 0.76s; border-radius: 4px;">nintendo</div>
+        <div class="tag g-purple" style="background: linear-gradient(90deg, #66a6ff, #89f7fe); color:#000; animation-delay: 0.78s;">multimedia</div>
+        <div class="tag outline" style="border-color: #00ff00; color: #00ff00; animation-delay: 0.8s;">social media</div>
+
+        <div class="tag outline" style="border-color: #0099ff; color: #0099ff; border-radius: 30px; animation-delay: 0.82s;">internet</div>
+        <div class="tag circle outline" style="border-color: #ff0055; animation-delay: 0.84s;">▶</div>
+        <div class="tag g-pink" style="background: linear-gradient(90deg, #ff9a9e, #fecfef); color: #000; animation-delay: 0.86s;">innovation</div>
+        <div class="tag rect outline" style="border-color: #ffff00; color: #ffff00; font-size: 1.2rem; animation-delay: 0.88s;">☺</div>
+        <div class="tag outline" style="animation-delay: 0.9s;">documentary ------</div>
+        <div class="tag outline" style="border-style: dashed; animation-delay: 0.92s;">---- television show</div>
+        <div class="tag outline" style="border-radius: 30px 4px 4px 30px; animation-delay: 0.94s;">《 rewind</div>
+        <div class="tag g-red" style="background: linear-gradient(90deg, #ff512f, #dd2476); animation-delay: 0.96s;">youtube</div>
+        <div class="tag outline" style="color: #E50914; border-color: #E50914; animation-delay: 0.98s;">netflix</div>
+        <div class="tag outline" style="border-radius: 30px; animation-delay: 1.0s;">pinterest</div>
+        <div class="tag g-purple" style="background: linear-gradient(90deg, #da22ff, #9733ee); animation-delay: 1.02s;">golden globe</div>
+        <div class="tag rect outline" style="animation-delay: 1.04s;">google</div>
+        <div class="tag g-green" style="background: linear-gradient(90deg, #ccff00, #00ffcc); color:#000; animation-delay: 1.06s;">performance</div>
+        <div class="tag outline" style="border-radius: 30px; animation-delay: 1.08s;">video clip</div>
+        <div class="tag circle outline" style="border-color: #003791; color: #003791; animation-delay: 1.1s;">PS</div>
+        <div class="tag rect outline" style="animation-delay: 1.12s;">instrumental</div>
+        <div class="tag g-red" style="border-radius: 4px; animation-delay: 1.14s;">live</div>
+        <div class="tag rect outline" style="animation-delay: 1.16s;">live concert</div>
+        <div class="tag rect outline" style="animation-delay: 1.18s;">✤</div>
+        
+        <div class="tag g-teal" style="animation-delay: 1.2s;">streaming</div>
+        <div class="tag outline" style="border-color: #ff00ff; color:#ff00ff; animation-delay: 1.22s;">cyberpunk</div>
+        <div class="tag g-orange" style="animation-delay: 1.24s;">cinema</div>
+        <div class="tag circle g-yellow" style="animation-delay: 1.26s;">★</div>
+        <div class="tag g-blue" style="animation-delay: 1.28s;">prime</div>
+        <div class="tag outline" style="animation-delay: 1.3s;">hbo max</div>
+        <div class="tag g-purple" style="animation-delay: 1.32s;">twitch</div>
+        <div class="tag circle outline" style="animation-delay: 1.34s;">?</div>
+        <div class="tag g-green" style="animation-delay: 1.36s;">spotify</div>
+        <div class="tag outline" style="animation-delay: 1.38s;">podcasts</div>
+        <div class="tag rect outline" style="animation-delay: 1.4s;">rss feed</div>
+        <div class="tag g-red" style="animation-delay: 1.42s;">viral</div>
+        <div class="tag outline" style="border-radius: 30px; animation-delay: 1.44s;">influencer</div>
+        <div class="tag g-blue" style="animation-delay: 1.46s;">metaverse</div>
+        <div class="tag outline" style="animation-delay: 1.48s;">crypto</div>
+        <div class="tag g-yellow" style="animation-delay: 1.5s;">nft</div>
+        <div class="tag circle outline" style="background: #fff; color: #000; animation-delay: 1.52s;">$</div>
+
+    </div>
+
+    <div id="lxr-nav-trigger" style="position: fixed; top: 20px; right: 20px; z-index: 99999; cursor: pointer; mix-blend-mode: difference; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: bold; border: 1px solid white; padding: 5px 10px; background: black; text-transform: uppercase; font-size: 12px;">
+        [ + ] INDEX
+    </div>
+
+    <div id="lxr-nav-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; flex-direction: column; padding: 40px; box-sizing: border-box; font-family: 'Courier New', monospace; color: #fff; overflow-y: auto;">
+        <div style="border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <span>LXR_SYSTEM_DIRECTORY</span>
+            <span onclick="document.getElementById('lxr-nav-overlay').style.display='none'" style="cursor: pointer;">[ CLOSE X ]</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <a href="index.html" style="color: #fff; text-decoration: none; display: block; padding: 10px; border: 1px solid #fff;">&lt; RETURN TO HOME</a>
         </div>
     </div>
 
-    <canvas id="field"></canvas>
-
     <script>
-        const canvas = document.getElementById('field');
-        const ctx = canvas.getContext('2d');
-        const cursor = document.getElementById('cursor');
-
-        let width, height;
-        let mouse = { x: -1000, y: -1000 }; // Start off-screen
-
-        // Grid Settings
-        const spacing = 40; // Space between lines
-        const lineLength = 25; // Length of the needle
-
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        // Track Mouse
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-            
-            // Move custom cursor
-            cursor.style.left = e.clientX + 'px';
-            cursor.style.top = e.clientY + 'px';
+        document.getElementById('lxr-nav-trigger').addEventListener('click', function() {
+            document.getElementById('lxr-nav-overlay').style.display = 'flex';
         });
-
-        function draw() {
-            // Clear screen
-            ctx.fillStyle = '#f0f0f0';
-            ctx.fillRect(0, 0, width, height);
-
-            ctx.strokeStyle = '#111'; // Dark lines
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-
-            // Loop through a grid
-            for (let x = 0; x < width + spacing; x += spacing) {
-                for (let y = 0; y < height + spacing; y += spacing) {
-                    
-                    // 1. Calculate angle to mouse
-                    const dx = mouse.x - x;
-                    const dy = mouse.y - y;
-                    const angle = Math.atan2(dy, dx);
-                    
-                    // 2. Calculate Distance (for optional effects)
-                    const dist = Math.sqrt(dx * dx + dy * dy);
-                    
-                    // 3. Draw the line
-                    ctx.save();
-                    ctx.translate(x, y);
-                    ctx.rotate(angle);
-                    
-                    // Dynamic color based on distance?
-                    // Closer = Thicker/Darker
-                    if (dist < 300) {
-                        ctx.strokeStyle = '#000';
-                        ctx.lineWidth = 3;
-                    } else {
-                        ctx.strokeStyle = '#ccc';
-                        ctx.lineWidth = 1;
-                    }
-
-                    ctx.beginPath();
-                    // Draw an arrow or just a line
-                    ctx.moveTo(-lineLength / 2, 0);
-                    ctx.lineTo(lineLength / 2, 0);
-                    ctx.stroke();
-                    
-                    ctx.restore();
-                }
-            }
-
-            requestAnimationFrame(draw);
-        }
-
-        draw();
     </script>
+
 </body>
 </html>

@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>LXR | NO SIGNAL</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | 09. MANIFESTO</title>
+
     <script>
         if (sessionStorage.getItem('allow_access') === 'yes') {
             sessionStorage.removeItem('allow_access');
@@ -15,49 +17,172 @@
             window.location.replace('index.html');
         }
     </script>
+
     <style>
         html { display: none; }
-        body { margin: 0; padding: 0; background: #000; overflow: hidden; display: flex; align-items: center; justify-content: center; height: 100vh; }
 
-        .noise {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-radial-gradient(#000 0 0.0001%, #111 0 0.0002%) 50% 0/2500px 2500px,
-                        repeating-conic-gradient(#000 0 0.0001%, #111 0 0.0002%) 60% 60%/2500px 2500px;
-            background-blend-mode: difference;
-            animation: shift 0.2s infinite alternate;
-            opacity: 0.5;
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #0d0d0d; /* Slightly softer black for screen */
+            color: #ffffff;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* Lock scroll to focus on the poster */
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .message {
-            position: relative; z-index: 10;
-            color: #fff; font-family: monospace; font-size: 2rem;
-            text-align: center;
-            mix-blend-mode: exclusion;
+        /* --- POSTER CONTAINER --- */
+        .manifesto-wrapper {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 1.5vw; /* Gap between horizontal phrases */
+            text-transform: uppercase;
+            font-weight: 700;
+            /* Responsive typography scaling */
+            font-size: clamp(1rem, 3.5vw, 4rem); 
+            line-height: 1;
+            white-space: nowrap;
         }
 
-        .glitch-text {
-            animation: glitch 1s infinite;
-            font-weight: bold;
+        /* The horizontal static text */
+        .side-text {
+            color: #ffffff;
+            letter-spacing: -1px;
         }
 
-        @keyframes shift { 100% { background-position: 50% 0, 60% 50%; } }
-        @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
+        /* --- THE VERTICAL STACK --- */
+        .verb-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Left align the stack */
+            /* We translate the stack up so 'MADE' sits in the center */
+            /* Calculation: 7 items above 'MADE'. 1em height each approx. */
+            transform: translateY(-0.1em); 
         }
+
+        .verb {
+            display: block;
+            opacity: 1;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            line-height: 1;
+        }
+
+        /* Specific Colors matching the reference image */
+        .c-blue    { color: #4d4dff; }
+        .c-orange  { color: #ff6600; }
+        .c-yellow  { color: #ffd700; }
+        .c-cyan    { color: #00ccff; }
+        .c-salmon  { color: #ff8080; }
+        .c-green   { color: #00cc66; }
+        .c-lavender{ color: #cc99ff; }
+        .c-white   { color: #ffffff; }
+        .c-pink    { color: #ff99cc; }
+        .c-gold    { color: #e6b800; }
+        .c-purple  { color: #9933ff; }
+
+        /* The Anchor Word */
+        .center-axis {
+            color: #fff;
+            position: relative;
+        }
+        
+        /* Optional: Dim others on hover to focus on one */
+        .verb-stack:hover .verb {
+            opacity: 0.3;
+        }
+        .verb-stack .verb:hover {
+            opacity: 1;
+            transform: scale(1.1) translateX(10px);
+            cursor: default;
+        }
+
+        /* --- RESPONSIVE ADJUSTMENTS --- */
+        @media (max-width: 768px) {
+            .manifesto-wrapper {
+                flex-direction: column;
+                gap: 20px;
+                font-size: 2rem;
+            }
+            
+            .verb-stack {
+                align-items: center;
+                transform: none;
+            }
+
+            .side-text {
+                display: none; /* On mobile, just show the stack or simplify */
+            }
+            
+            /* Show simplified mobile version text */
+            .mobile-header {
+                display: block;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+        }
+        
+        @media (min-width: 769px) {
+            .mobile-header { display: none; }
+        }
+
     </style>
 </head>
 <body>
-    <div class="noise"></div>
-    <div class="message">
-        <div class="glitch-text">FATAL_EXCEPTION</div>
-        <div style="font-size: 1rem; margin-top: 20px;">MEMORY_LEAK_DETECTED</div>
-        <br>
-        <button onclick="location.reload()" style="background: white; border: none; padding: 10px 20px; font-family: monospace; cursor: pointer; font-weight: bold;">FORCE_RELOAD</button>
+
+    <div class="mobile-header side-text">NOTHING GREAT<br>IS MADE ALONE</div>
+
+    <div class="manifesto-wrapper">
+        
+        <div class="side-text">NOTHING GREAT IS</div>
+
+        <div class="verb-stack">
+            <span class="verb c-blue">DREAMED</span>
+            <span class="verb c-orange">INVENTED</span>
+            <span class="verb c-yellow">PAINTED</span>
+            <span class="verb c-cyan">DESIGNED</span>
+            <span class="verb c-salmon">BUILT</span>
+            <span class="verb c-green">PRODUCED</span>
+            <span class="verb c-lavender">PLAYED</span>
+            
+            <span class="verb center-axis">MADE</span>
+            
+            <span class="verb c-orange">WRITTEN</span>
+            <span class="verb c-cyan">IMAGINED</span>
+            <span class="verb c-pink">DEVELOPED</span>
+            <span class="verb c-gold">CREATED</span>
+            <span class="verb c-yellow">RECORDED</span>
+            <span class="verb c-green">DISCOVERED</span>
+            <span class="verb c-purple">PUBLISHED</span>
+        </div>
+
+        <div class="side-text">ALONE</div>
+
     </div>
+
+    <div id="lxr-nav-trigger" style="position: fixed; top: 20px; right: 20px; z-index: 99999; cursor: pointer; mix-blend-mode: difference; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: bold; border: 1px solid white; padding: 5px 10px; background: black; text-transform: uppercase; font-size: 12px;">
+        [ + ] INDEX
+    </div>
+
+    <div id="lxr-nav-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; flex-direction: column; padding: 40px; box-sizing: border-box; font-family: 'Courier New', monospace; color: #fff; overflow-y: auto;">
+        <div style="border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <span>LXR_SYSTEM_DIRECTORY</span>
+            <span onclick="document.getElementById('lxr-nav-overlay').style.display='none'" style="cursor: pointer;">[ CLOSE X ]</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <a href="index.html" style="color: #fff; text-decoration: none; display: block; padding: 10px; border: 1px solid #fff;">&lt; RETURN TO HOME</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('lxr-nav-trigger').addEventListener('click', function() {
+            document.getElementById('lxr-nav-overlay').style.display = 'flex';
+        });
+    </script>
+
 </body>
 </html>

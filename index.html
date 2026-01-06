@@ -2,57 +2,167 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>SYSTEM ROUTER | 10 PAGES</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Router</title>
     <style>
-        body { background-color: #0000aa; color: #fff; font-family: monospace; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; margin: 0; }
-        .popup { background: #c0c0c0; border: 2px solid #fff; border-right-color: #404040; border-bottom-color: #404040; width: 400px; color: black; font-family: Arial, sans-serif; display: none; padding: 2px; }
-        .header { background: #000080; color: white; padding: 4px 8px; font-weight: bold; display: flex; justify-content: space-between; }
-        .content { padding: 20px; display: flex; gap: 15px; }
-        .btn { margin-top: 10px; border: 2px solid #404040; border-left-color: #fff; border-top-color: #fff; background: #c0c0c0; padding: 5px 15px; font-weight: bold; cursor: pointer; }
+        :root {
+            --apple-blue: #007AFF;
+            --apple-bg: #F2F2F7;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-primary: #1D1D1F;
+            --text-secondary: #86868B;
+        }
+
+        body {
+            background-color: var(--apple-bg);
+            /* Subtle abstract gradient background */
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%);
+            background-size: cover;
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin: 0;
+        }
+
+        /* The Glass Card */
+        .modal {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            width: 320px;
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            display: none; /* Hidden by default until JS checks logic */
+            animation: popIn 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+        }
+
+        /* Icon styling */
+        .icon-container {
+            margin-bottom: 20px;
+        }
+        
+        .icon-container svg {
+            width: 60px;
+            height: 60px;
+            color: #FF3B30; /* Apple System Red */
+            filter: drop-shadow(0 4px 6px rgba(255, 59, 48, 0.3));
+        }
+
+        /* Typography */
+        h1 {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 10px 0;
+            color: var(--text-primary);
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+            margin: 0 0 25px 0;
+        }
+
+        /* The Button */
+        .btn {
+            background-color: var(--apple-blue);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            font-size: 17px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.1s ease, background-color 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+        }
+
+        .btn:hover {
+            background-color: #0062cc;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Animation */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-    <div class="popup" id="crash-popup">
-        <div class="header"><span>System Error</span><span>X</span></div>
-        <div class="content">
-            <div style="font-size:30px; color:red; border:2px solid red; border-radius:50%; width:40px; height:40px; display:flex; align-items:center; justify-content:center;">X</div>
-            <div>
-                <p><strong>System Halted.</strong></p>
-                <p style="font-size: 12px;">10-Page Array Unstable.<br>Manual reboot required.</p>
-                <button class="btn" onclick="launchRandomPage()">REBOOT</button>
-            </div>
+    <div class="modal" id="system-dialog">
+        <div class="icon-container">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                <path d="M12 7V13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="16.5" r="1" fill="currentColor"/>
+            </svg>
         </div>
+        
+        <h1>Connection Required</h1>
+        <p>The routing array has been reset. A manual reboot is required to access the network.</p>
+        
+        <button class="btn" onclick="launchRandomPage()">Reboot System</button>
     </div>
 
     <script>
-        // --- 1. THE LIST OF 10 PAGES ---
+        // --- 1. THE LIST OF 10 PAGES (Strictly 10) ---
         const allPages = [
-            'page1.html', 'page2.html', 'page3.html', 'page4.html', 'page5.html',
-            'page6.html', 'page7.html', 'page8.html', 'page9.html', 'page10.html',
-            'page_cinema.html',  // The Movie
-    'page_critic.html',  // The Judge
-    'page_audio.html'    // The Music
+            'page1.html', 
+            'page2.html', 
+            'page3.html', 
+            'page4.html', 
+            'page5.html',
+            'page6.html', 
+            'page7.html', 
+            'page8.html', 
+            'page9.html', 
+            'page10.html'
         ];
 
         function launchRandomPage() {
             // A. Create Ticket
             sessionStorage.setItem('allow_access', 'yes');
 
-            // B. Filter out the last visited page so you don't repeat
+            // B. Filter out the last visited page to ensure variety
             const lastPage = sessionStorage.getItem('last_visited_page');
             const available = allPages.filter(p => p !== lastPage);
 
             // C. Pick Random
-            const randomPage = available[Math.floor(Math.random() * available.length)];
+            // If only 1 page remains and it was the last visited, we might have an empty array.
+            // In that edge case, just reset to allPages.
+            const sourceArray = available.length > 0 ? available : allPages;
+            
+            const randomPage = sourceArray[Math.floor(Math.random() * sourceArray.length)];
 
-            // D. Go
+            // D. Save current as last visited for next time
+            sessionStorage.setItem('last_visited_page', randomPage);
+
+            // E. Go
             window.location.replace(randomPage);
         }
 
         // 2. CHECK HISTORY
+        // If they haven't visited before, show the "Apple" dialog.
+        // If they have, route them immediately.
         if (!sessionStorage.getItem('visited_before')) {
-            document.getElementById('crash-popup').style.display = 'block';
+            document.getElementById('system-dialog').style.display = 'block';
             sessionStorage.setItem('visited_before', 'true');
         } else {
             launchRandomPage();

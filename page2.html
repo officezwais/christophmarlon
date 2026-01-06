@@ -244,5 +244,41 @@
         // Start almost immediately
         setTimeout(marketLoop, 500);
     </script>
+    <div id="lxr-nav-trigger" style="position: fixed; top: 20px; right: 20px; z-index: 99999; cursor: pointer; mix-blend-mode: difference; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: bold; border: 1px solid white; padding: 5px 10px; background: black; text-transform: uppercase; font-size: 12px;">
+    [ + ] INDEX
+</div>
+
+<div id="lxr-nav-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; flex-direction: column; padding: 40px; box-sizing: border-box; font-family: 'Courier New', monospace; color: #fff; overflow-y: auto;">
+    <div style="border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+        <span>LXR_SYSTEM_DIRECTORY</span>
+        <span onclick="document.getElementById('lxr-nav-overlay').style.display='none'" style="cursor: pointer;">[ CLOSE X ]</span>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+        <a href="page1.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">01. IDENTITY</a>
+        <a href="page2.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">02. ECONOMY</a>
+        <a href="page3.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">03. INTERACTION</a>
+        <a href="page4.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">04. ARCHIVE</a>
+        <a href="page5.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">05. AESTHETIC</a>
+        <a href="page6.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">06. DEPTH</a>
+        <a href="page7.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">07. CONTENT</a>
+        <a href="page8.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">08. CODE</a>
+        <a href="page9.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">09. MANIFESTO</a>
+        <a href="page10.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">10. FIELD</a>
+        <a href="page11.html" style="color: #888; text-decoration: none; display: block; padding: 10px; border: 1px solid #222;">11. VIVARIUM</a>
+        <a href="page12.html" style="color: #fff; text-decoration: none; display: block; padding: 10px; border: 1px solid #fff;">12. CAPTCHA</a>
+        <a href="page13.html" style="color: #fff; text-decoration: none; display: block; padding: 10px; border: 1px solid #fff;">13. OBJECT</a>
+        
+        <a href="page_cinema.html" style="color: #00ff00; text-decoration: none; display: block; padding: 10px; border: 1px solid #00ff00;">> CINEMA</a>
+        <a href="page_audio.html" style="color: #00ff00; text-decoration: none; display: block; padding: 10px; border: 1px solid #00ff00;">> SONIC</a>
+        <a href="page_critic.html" style="color: #00ff00; text-decoration: none; display: block; padding: 10px; border: 1px solid #00ff00;">> CRITIC</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('lxr-nav-trigger').addEventListener('click', function() {
+        document.getElementById('lxr-nav-overlay').style.display = 'flex';
+    });
+</script>
 </body>
 </html>

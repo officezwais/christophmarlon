@@ -3,129 +3,312 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>christoph marlon</title>
+    <title>LXR | 01. IDENTITY</title>
 
     <script>
-        // Check for the "One-Time Ticket"
+        // Exactly as requested: checks for ticket, deletes it, or kicks you out.
         if (sessionStorage.getItem('allow_access') === 'yes') {
-            // Ticket found! Consume it.
             sessionStorage.removeItem('allow_access');
-            // Reveal the page
             document.documentElement.style.display = 'block';
         } else {
-            // No Ticket? (User hit Refresh) -> KICK OUT
-            
-            // 1. Save this page name so we don't return to it immediately
             var path = window.location.pathname;
             var pageName = path.split("/").pop();
             sessionStorage.setItem('last_visited_page', pageName);
-
-            // 2. Hide and Redirect to Router
             document.documentElement.style.display = 'none';
             window.location.replace('index.html');
         }
     </script>
 
     <style>
-        /* CRITICAL: Hide page by default to prevent flashing before script runs */
+        /* Hide html immediately until script runs */
         html { display: none; }
 
-        /* Reset and Body Styles */
-        body, html {
+        body {
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4; /* Light grey/white paper feel */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: #000;
+            overflow-x: hidden;
+        }
+
+        /* --- GRID LAYOUT --- */
+        .grid-container {
+            display: grid;
+            /* 3 Columns equal width */
+            grid-template-columns: repeat(3, 1fr);
+            /* Borders are created by the grid gaps or border collapsing manually */
             width: 100%;
-            height: 100%;
-            background-color: #000000; /* Black Background */
-            color: #ffffff; /* White Text */
-            /* Switched to a system sans-serif stack for a bolder, brutalist feel */
-            font-family: 'Arial Black', 'Helvetica Neue', Helvetica, sans-serif; 
-            overflow: hidden; 
+            border-top: 1px solid #000;
+            border-left: 1px solid #000;
+            box-sizing: border-box;
         }
 
-        /* Flexbox to center the horse */
-        body {
+        .grid-item {
+            border-right: 1px solid #000;
+            border-bottom: 1px solid #000;
+            min-height: 35vh; /* Tall cells like the image */
+            padding: 20px;
+            box-sizing: border-box;
             display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Top Left: Christoph Marlon */
-        .header-text {
-            position: absolute;
-            top: 40px;
-            left: 40px;
-            
-            /* Brutalist Styling */
-            font-size: 42px;       /* Much larger */
-            font-weight: 900;      /* Maximum boldness */
-            letter-spacing: -2px;  /* Tighter spacing for impact */
-            line-height: 1;
-            z-index: 10;
-        }
-
-        /* Top Right: Portfolio */
-        .portfolio-text {
-            position: absolute;
-            top: 40px;
-            right: 40px;
-            
-            /* Brutalist Styling - slightly smaller but still bold */
-            font-size: 24px;
-            font-weight: 700;
-            letter-spacing: -1px;
-            text-decoration: none; /* No default underline */
-            color: #ffffff;
-            z-index: 10;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            background: #fff;
+            transition: background-color 0.1s ease;
+            overflow: hidden;
             cursor: pointer;
         }
 
-        /* Optional: Hover effect for portfolio to make it feel interactive */
-        .portfolio-text:hover {
-            text-decoration: underline;
-            text-decoration-thickness: 4px; /* Chunky underline */
+        /* --- HEADER CELLS (Top Row) --- */
+        .header-cell {
+            min-height: 100px;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .header-logo { justify-content: flex-start; align-items: flex-start; }
+        .header-mid { color: #000; } 
+        .header-right { justify-content: space-between; padding: 0 40px; }
+
+        /* --- TYPOGRAPHY & TAGS --- */
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            z-index: 2;
         }
 
-        /* The Horse Animation Styling */
-        .horse-container img {
-            /* Invert colors: Black dots -> White dots */
-            filter: invert(100%); 
-            image-rendering: pixelated; 
-            width: 300px; 
-            height: auto;
+        .tag-pill {
+            background-color: #000;
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .tag-pill span.sub {
+            opacity: 0.7;
+            font-weight: 400;
+            margin-left: 5px;
+            border-left: 1px solid #555;
+            padding-left: 5px;
         }
 
-        /* Responsive adjustments for mobile */
-        @media (max-width: 600px) {
-            .header-text {
-                font-size: 28px;
-                left: 20px;
-                top: 20px;
-            }
-            .portfolio-text {
-                font-size: 18px;
-                right: 20px;
-                top: 25px;
-            }
-            .horse-container img {
-                width: 200px;
-            }
+        .details-link {
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .agency-name {
+            font-size: 2.5rem; /* Large text like 'twid' */
+            font-weight: 500;
+            line-height: 1;
+            letter-spacing: -1px;
+            z-index: 2;
+        }
+
+        /* --- HOVER EFFECTS (The Yellow Image Logic) --- */
+        .hover-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+            filter: grayscale(100%); /* Start B&W */
+        }
+        
+        /* Specific image for demo (using placeholder) */
+        .item-twid .hover-bg { background-image: url('https://picsum.photos/seed/twid/800/800'); }
+        .item-kontora .hover-bg { background-image: url('https://picsum.photos/seed/kontora/800/800'); }
+        .item-qream .hover-bg { background-image: url('https://picsum.photos/seed/qream/800/800'); background-color: #eeb902; filter: none; mix-blend-mode: multiply;}
+        
+        /* The Green Sticker on Hover */
+        .sticker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 80px;
+            height: 80px;
+            background-color: #00ff00; /* Neon Green */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+        
+        .sticker svg {
+            width: 40px;
+            height: 40px;
+            fill: black;
+        }
+
+        .grid-item:hover .hover-bg {
+            opacity: 1;
+        }
+
+        .grid-item:hover .sticker {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* Responsive Mobile Stack */
+        @media (max-width: 768px) {
+            .grid-container { grid-template-columns: 1fr; }
+            .header-cell { min-height: 60px; border-right: none; }
+            .grid-item { min-height: 200px; border-right: none; }
         }
     </style>
 </head>
 <body>
 
-    <div class="header-text">
-        christoph marlon
+    <div class="grid-container">
+        <div class="grid-item header-cell header-logo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 10px;">
+                <path d="M7 17l9.2-9.2M17 17V7H7" />
+            </svg>
+            LXR Identity
+        </div>
+        <div class="grid-item header-cell header-mid">
+            <span style="color: #00ff00; margin-right: 10px;">*</span> ALL TEAMS
+        </div>
+        <div class="grid-item header-cell header-right">
+            <span>ABOUT</span>
+            <span>FAQ</span>
+        </div>
+
+        <div class="grid-item item-twid">
+            <div class="hover-bg"></div>
+            <div class="sticker">
+                <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="black" stroke-width="2" fill="none"/></svg>
+            </div>
+            <div class="top-row">
+                <div class="tag-pill">CREATIVE <span class="sub">30-50</span></div>
+                <span class="details-link">Details</span>
+            </div>
+            <div class="agency-name">twid</div>
+        </div>
+
+        <div class="grid-item item-qream" style="background-color: #eeb902;">
+            <div class="hover-bg" style="opacity: 1; mix-blend-mode: multiply;"></div> 
+            <div class="sticker" style="transform: translate(-50%, -50%) scale(1);">
+                <svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="black" stroke-width="2" fill="none"/></svg>
+            </div>
+            <div class="top-row">
+                <div class="tag-pill">BRANDING <span class="sub">5-10</span></div>
+                <span class="details-link">Details</span>
+            </div>
+            <div class="agency-name">Qream Design<br>Agency</div>
+        </div>
+
+        <div class="grid-item item-kontora">
+            <div class="hover-bg"></div>
+            <div class="sticker"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="black" stroke-width="2" fill="none"/></svg></div>
+            <div class="top-row">
+                <div class="tag-pill">BRANDING <span class="sub">20-30</span></div>
+                <span class="details-link">Details</span>
+            </div>
+            <div class="agency-name">Kontora</div>
+        </div>
+
+        <div class="grid-item">
+            <div class="hover-bg" style="background-image: url('https://picsum.photos/seed/adv/800/800');"></div>
+            <div class="sticker"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="black" stroke-width="2" fill="none"/></svg></div>
+            <div class="top-row">
+                <div class="tag-pill">BRANDING <span class="sub">20-30</span></div>
+                <span class="details-link">Details</span>
+            </div>
+            <div class="agency-name">Advanced<br>Team</div>
+        </div>
+
+        <div class="grid-item">
+            <div class="hover-bg" style="background-image: url('https://picsum.photos/seed/solar/800/800');"></div>
+            <div class="sticker"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="black" stroke-width="2" fill="none"/></svg></div>
+            <div class="top-row">
+                <div class="tag-pill">BRANDING <span class="sub">20-30</span></div>
+                <span class="details-link">Details</span>
+            </div>
+            <div class="agency-name">Solar Digital</div>
+        </div>
+
+        <div class="grid-item">
+            <div class="hover-bg" style="background-image: url('https://picsum.photos/seed/dl/800/800');"></div>
+            <div class="sticker"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="black" stroke-width="2" fill="none"/></svg></div>
+            <div class="top-row">
+                <div class="tag-pill">UI / UX <span class="sub">5-10</span></div>
+                <span class="details-link">Details</span>
+            </div>
+            <div class="agency-name">DL agency</div>
+        </div>
+
+        <div class="grid-item">
+            <div class="hover-bg" style="background-image: url('https://picsum.photos/seed/zipl/800/800');"></div>
+            <div class="sticker"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="black" stroke-width="2" fill="none"/></svg></div>
+            <div class="top-row">
+                <div class="tag-pill">BRANDING <span class="sub">20-30</span></div>
+                <span class="details-link">Details</span>
+            </div>
+            <div class="agency-name">ZIPL Web<br>Studio</div>
+        </div>
+
+        <div class="grid-item">
+            <div class="hover-bg" style="background-image: url('https://picsum.photos/seed/vintage/800/800');"></div>
+            <div class="sticker"><svg viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H7M17 7V17" stroke="black" stroke-width="2" fill="none"/></svg></div>
+            <div class="top-row">
+                <div class="tag-pill">UI / UX <span class="sub">20-30</span></div>
+                <span class="details-link">Details</span>
+            </div>
+            <div class="agency-name">Vintage Web<br>Production</div>
+        </div>
+
+        <div class="grid-item" style="background: #000; color: #fff;">
+            <div class="top-row">
+                <div class="tag-pill" style="background: #fff; color: #000;">SYSTEM</div>
+            </div>
+            <div class="agency-name">END OF<br>LIST</div>
+        </div>
+
     </div>
 
-    <a href="#" class="portfolio-text">
-        portfolio
-    </a>
-
-    <div class="horse-container">
-        <img src="horse.gif" alt="Pixel Horse Running">
+    <div id="lxr-nav-trigger" style="position: fixed; top: 20px; right: 20px; z-index: 99999; cursor: pointer; mix-blend-mode: difference; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: bold; border: 1px solid white; padding: 5px 10px; background: black; text-transform: uppercase; font-size: 12px;">
+        [ + ] INDEX
     </div>
+
+    <div id="lxr-nav-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; flex-direction: column; padding: 40px; box-sizing: border-box; font-family: 'Courier New', monospace; color: #fff; overflow-y: auto;">
+        <div style="border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <span>LXR_SYSTEM_DIRECTORY</span>
+            <span onclick="document.getElementById('lxr-nav-overlay').style.display='none'" style="cursor: pointer;">[ CLOSE X ]</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <a href="index.html" style="color: #fff; text-decoration: none; display: block; padding: 10px; border: 1px solid #fff;">&lt; RETURN TO HOME</a>
+            </div>
+    </div>
+
+    <script>
+        document.getElementById('lxr-nav-trigger').addEventListener('click', function() {
+            document.getElementById('lxr-nav-overlay').style.display = 'flex';
+        });
+    </script>
 
 </body>
 </html>

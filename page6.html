@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LXR | Stack</title>
+    <title>LXR | 06. DEPTH</title>
 
     <script>
         if (sessionStorage.getItem('allow_access') === 'yes') {
@@ -23,192 +23,185 @@
 
         body {
             margin: 0;
-            padding: 0;
-            background-color: #1a1a1a; /* Dark concrete grey */
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 40px;
+            background-color: #0b0b0b; /* Deep black/charcoal */
+            color: #eeeeee;
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            perspective: 1000px;
-        }
-
-        .instruction {
-            position: absolute;
-            bottom: 40px;
-            color: #666;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            pointer-events: none;
-        }
-
-        /* --- THE DECK CONTAINER --- */
-        .card-stack {
-            position: relative;
-            width: 350px;
-            height: 500px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* --- INDIVIDUAL CARD STYLES --- */
-        .card {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: #f4f4f4;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
-            padding: 30px;
+            justify-content: center;
+            align-items: center;
             box-sizing: border-box;
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            
-            /* Center content */
-            justify-content: space-between;
-            
-            /* Prevent text selection */
-            user-select: none;
         }
 
-        .card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+        /* --- LAYOUT CONTAINER --- */
+        .content-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
         }
 
-        /* --- CARD CONTENT --- */
-        .card-header {
-            font-size: 0.8rem;
-            color: #888;
-            text-transform: uppercase;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-        }
-
-        .card-title {
-            font-size: 3rem;
-            font-weight: 900;
-            line-height: 0.9;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            word-wrap: break-word;
-        }
-
-        .card-footer {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.9rem;
+        /* --- TOP HEADER LINE --- */
+        .header-line {
             display: flex;
+            align-items: center;
             justify-content: space-between;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+            margin-bottom: 40px;
+            font-size: clamp(1.5rem, 3vw, 2.5rem);
+            font-weight: 400;
         }
 
-        /* --- ANIMATION CLASSES (Added via JS) --- */
+        .header-line .right {
+            font-family: 'Courier New', monospace;
+            font-style: italic;
+            opacity: 0.7;
+        }
+
+        /* --- MAIN TEXT BLOCK --- */
+        .main-text {
+            font-size: clamp(2.5rem, 5.5vw, 6rem); /* Responsive Hero Text */
+            line-height: 1.2;
+            font-weight: 500;
+            text-align: left;
+            letter-spacing: -0.02em;
+        }
+
+        /* Typography Mixins */
+        .serif-italic {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        /* Inline Images (The Thumbnails) */
+        .inline-img {
+            display: inline-block;
+            height: 0.7em; /* Scales with text size */
+            width: auto;
+            aspect-ratio: 16/9;
+            object-fit: cover;
+            vertical-align: middle;
+            margin: 0 10px;
+            border-radius: 4px;
+            transition: transform 0.2s ease;
+            cursor: pointer;
+            border: 1px solid #333;
+        }
+
+        .inline-img:hover {
+            transform: scale(1.2);
+            border-color: #fff;
+        }
+
+        /* Specific Colors from reference */
+        .neon-green { color: #ccff00; }
+        .neon-arrow { color: #ccff00; font-family: monospace; }
         
-        /* Fly Right */
-        .swiped-right {
-            animation: flyRight 0.6s forwards ease-in;
-            pointer-events: none; /* Can't click again */
-        }
-        
-        /* Fly Left */
-        .swiped-left {
-            animation: flyLeft 0.6s forwards ease-in;
-            pointer-events: none;
-        }
-
-        @keyframes flyRight {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(100vw, 200px) rotate(45deg); opacity: 0; }
+        .logo-text {
+            border: 1px solid #ccff00;
+            color: #ccff00;
+            font-size: 0.5em;
+            padding: 2px 8px;
+            vertical-align: middle;
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transform: skew(-10deg);
+            display: inline-block;
         }
 
-        @keyframes flyLeft {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-100vw, 200px) rotate(-45deg); opacity: 0; }
+        /* --- FOOTER CREDITS --- */
+        .footer-credits {
+            margin-top: 80px;
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            color: #888;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            max-width: 800px;
         }
 
-        /* --- LAST CARD (REFRESH) --- */
-        .card.refresh-card {
-            background: #ccff00; /* Neon */
-            color: #000;
-            z-index: 0; /* Always at bottom */
+        .sup { vertical-align: super; font-size: 0.6em; margin-right: 5px; }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            body { padding: 20px; align-items: flex-start; }
+            .inline-img { margin: 0 5px; }
         }
 
     </style>
 </head>
 <body>
 
-    <div class="instruction">CLICK TO DISCARD</div>
-
-    <div class="card-stack" id="stack">
+    <div class="content-wrapper">
         
-        <div class="card refresh-card" style="z-index: 1;" onclick="location.reload()">
-            <div class="card-header">SYSTEM</div>
-            <div class="card-title">END OF<br>STACK</div>
-            <div class="card-footer">
-                <span>CLICK TO REFRESH</span>
-                <span>↺</span>
+        <div class="header-line">
+            <div>
+                This is <span class="serif-italic">LXR's Space Hippie</span>
+                <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=100&q=80" class="inline-img" style="height: 1em; aspect-ratio: 1/1;">
             </div>
+            <div class="right">http ___</div>
         </div>
 
-        <div class="card" style="z-index: 2; transform: rotate(-2deg);">
-            <div class="card-header">PROJECT 004</div>
-            <div class="card-title">NEURAL<br>GARDEN</div>
-            <div class="card-footer">
-                <span>AI / WEBGL</span>
-                <span>2024</span>
-            </div>
+        <div class="main-text">
+            <span class="sup">_01</span>Visual Design for the digital ecosystem
+            <br>
+            of <span style="color: #ccff00;">&#10003;</span> Space 
+            
+            <img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=200&q=80" class="inline-img"> 
+            
+            Hippie <span class="neon-arrow">------&gt;</span> This
+            <br>
+            project was developed for <span class="serif-italic">LXR</span> (Global)
+            <br>
+            by the 
+            
+            <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=200&q=80" class="inline-img">
+            
+            R/GA (digital studio <span class="neon-green">*</span>) 
+            
+            <img src="https://images.unsplash.com/photo-1516455207990-7a41ce80f7ee?auto=format&fit=crop&w=200&q=80" class="inline-img">
+            
+            <br>
+            <span class="serif-italic">LXR</span> provided product 
+            
+            <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=150&q=80" class="inline-img" style="border-radius: 50%;"> 
+            
+            brand guides
+            <br>
+            images logo ( <span class="logo-text">SPACE HIPPIE</span> ) and wireframes.
         </div>
 
-        <div class="card" style="z-index: 3; transform: rotate(3deg);">
-            <div class="card-header">PROJECT 003</div>
-            <div class="card-title">BRUTAL<br>FORMS</div>
-            <div class="card-footer">
-                <span>ARCHIVE</span>
-                <span>2023</span>
-            </div>
-        </div>
-
-        <div class="card" style="z-index: 4; transform: rotate(-1deg);">
-            <div class="card-header">PROJECT 002</div>
-            <div class="card-title">SONIC<br>YOUTH</div>
-            <div class="card-footer">
-                <span>AUDIO</span>
-                <span>2022</span>
-            </div>
-        </div>
-
-        <div class="card" style="z-index: 5; transform: rotate(1deg);">
-            <div class="card-header">PROJECT 001</div>
-            <div class="card-title">HEAVY<br>METAL</div>
-            <div class="card-footer">
-                <span>IDENTITY</span>
-                <span>2021</span>
-            </div>
+        <div class="footer-credits">
+            * R/GA team for this project _ Visual designer _ Andres Silva Bello _ Visual designer _ Marcelo Quinzio _ Copywriter _ Genevive Hudson _ Creative Director _ Daan vanDam _ Producer _ Emilio Mallia _ Management Supervisor _ Teddy Black.
         </div>
 
     </div>
 
+    <div id="lxr-nav-trigger" style="position: fixed; top: 20px; right: 20px; z-index: 99999; cursor: pointer; mix-blend-mode: difference; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: bold; border: 1px solid white; padding: 5px 10px; background: black; text-transform: uppercase; font-size: 12px;">
+        [ + ] INDEX
+    </div>
+
+    <div id="lxr-nav-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; flex-direction: column; padding: 40px; box-sizing: border-box; font-family: 'Courier New', monospace; color: #fff; overflow-y: auto;">
+        <div style="border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <span>LXR_SYSTEM_DIRECTORY</span>
+            <span onclick="document.getElementById('lxr-nav-overlay').style.display='none'" style="cursor: pointer;">[ CLOSE X ]</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <a href="index.html" style="color: #fff; text-decoration: none; display: block; padding: 10px; border: 1px solid #fff;">&lt; RETURN TO HOME</a>
+        </div>
+    </div>
+
     <script>
-        const cards = document.querySelectorAll('.card');
-
-        // Add click event to all cards EXCEPT the last one (refresh card)
-        cards.forEach(card => {
-            if (!card.classList.contains('refresh-card')) {
-                card.addEventListener('click', function() {
-                    swipeCard(this);
-                });
-            }
+        document.getElementById('lxr-nav-trigger').addEventListener('click', function() {
+            document.getElementById('lxr-nav-overlay').style.display = 'flex';
         });
-
-        function swipeCard(card) {
-            // 50/50 chance to fly left or right
-            const randomDir = Math.random() > 0.5 ? 'swiped-right' : 'swiped-left';
-            card.classList.add(randomDir);
-        }
     </script>
+
 </body>
 </html>
