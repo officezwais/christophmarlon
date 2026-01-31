@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | 15. AESTHETIC</title>
+
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        html { display: none; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            /* The specific vibrant orange from the reference */
+            background-color: #FF3F00; 
+            color: #000;
+            font-family: 'Times New Roman', Times, serif; /* Serif for body text */
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .container {
+            width: 95vw;
+            height: 90vh;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            gap: 40px;
+        }
+
+        /* --- HEADER --- */
+        .header-row {
+            display: flex;
+            align-items: center;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border-left: 2px solid #000;
+            padding-left: 15px;
+            height: 20px;
+        }
+
+        /* --- CONTENT GRID --- */
+        .content-grid {
+            display: grid;
+            /* Left (Bio) | Mid (Contact) | Right (Huge Text) */
+            grid-template-columns: 1.2fr 0.8fr 1.5fr; 
+            gap: 4vw;
+            height: 100%;
+        }
+
+        /* --- COLUMN 1: BIO --- */
+        .col-bio {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            border-left: 1px solid rgba(0,0,0,0.1); /* Subtle guide line */
+            padding-left: 20px;
+        }
+
+        .intro-lead {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+            line-height: 1.1;
+            font-weight: 400;
+        }
+
+        .bio-text {
+            font-size: 1rem;
+            line-height: 1.4;
+            max-width: 90%;
+        }
+
+        /* --- COLUMN 2: CONTACT --- */
+        .col-contact {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            font-family: 'Times New Roman', Times, serif;
+            border-top: 1px solid #000;
+            padding-top: 20px;
+        }
+
+        .contact-intro {
+            font-size: 1rem;
+            line-height: 1.3;
+            margin-bottom: 30px;
+        }
+
+        .link-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.75rem;
+            margin-bottom: auto;
+        }
+
+        .link-item {
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+            text-decoration: none;
+            color: #000;
+            width: fit-content;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .link-item:hover {
+            background: #000;
+            color: #FF3F00;
+        }
+
+        .pull-quote {
+            border-top: 2px solid #000;
+            padding-top: 20px;
+            font-size: 1.1rem;
+            line-height: 1.3;
+            font-style: italic;
+        }
+        
+        .quote-mark {
+            font-size: 2rem;
+            line-height: 0;
+            vertical-align: -10px;
+            margin-right: 5px;
+            font-family: 'DM Serif Display', serif;
+        }
+
+        /* --- COLUMN 3: HUGE TYPOGRAPHY --- */
+        .col-poster {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            line-height: 0.82; /* Extremely tight leading */
+        }
+
+        .huge-text {
+            font-family: 'Anton', sans-serif; /* Condensed Impact style */
+            font-size: clamp(4rem, 13vw, 15rem);
+            text-transform: uppercase;
+            word-break: break-all;
+            color: #050505;
+        }
+
+        /* Hover effect on big text */
+        .huge-text span {
+            display: block;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: default;
+        }
+        .huge-text:hover span:nth-child(1) { transform: translateX(20px); }
+        .huge-text:hover span:nth-child(2) { transform: translateX(-10px); }
+        .huge-text:hover span:nth-child(3) { transform: translateX(30px); }
+        
+        /* Mobile Responsive */
+        @media (max-width: 900px) {
+            body { height: auto; overflow-y: auto; padding: 20px 0; }
+            .container { height: auto; width: 90vw; margin: 0 auto; gap: 20px; }
+            .content-grid { grid-template-columns: 1fr; gap: 40px; }
+            .col-poster { order: -1; } /* Put title first on mobile */
+            .huge-text { font-size: 5rem; line-height: 0.9; }
+            .col-bio { border-left: none; padding-left: 0; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div class="header-row">
+            01 &nbsp; | &nbsp; ABOUT LXR SYSTEM
+        </div>
+
+        <div class="content-grid">
+            
+            <div class="col-bio">
+                <div class="intro-lead">
+                    I am a digital designer & creative director with a background in computer science and front-end/backend web development.
+                </div>
+                <div class="bio-text">
+                    In the past several years my work has been awarded by the Webby Awards, TheFWA, Awwwards and CSS Design Awards among others. I specialize in innovative concepts to explore new ways of interacting with websites and desktop/mobile applications.<br><br>
+                    Beside design and code my own projects I explore custom cartography and datavisualisations. See some working samples or get in touch if you are interested in working together.
+                </div>
+            </div>
+
+            <div class="col-contact">
+                <div>
+                    <div class="contact-intro">
+                        If you are interested in working together feel free to <u style="cursor:pointer">get in touch</u> with me.<br><br>
+                        I am always looking for the next exciting challenge.
+                    </div>
+                    
+                    <div class="link-group">
+                        <a href="#" class="link-item">+852 6602 5040</a>
+                        <a href="#" class="link-item">lxr.system@gmail.com</a>
+                        <a href="#" class="link-item">@lxrsystem</a>
+                        <a href="#" class="link-item">github.com/lxrsystem</a>
+                    </div>
+                </div>
+
+                <div class="pull-quote">
+                    <span class="quote-mark">“</span>
+                    What's the use of being legible, when nothing inspires you to take notice of it?
+                    <span class="quote-mark">”</span>
+                </div>
+            </div>
+
+            <div class="col-poster">
+                <div class="huge-text">
+                    <span>DIGITAL</span>
+                    <span>DESIGNER,</span>
+                    <span>CREATIVE</span>
+                    <span>DIRECTOR</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="lxr-nav-trigger" style="position: fixed; top: 20px; right: 20px; z-index: 99999; cursor: pointer; mix-blend-mode: difference; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: bold; border: 1px solid white; padding: 5px 10px; background: black; text-transform: uppercase; font-size: 12px;">
+        [ + ] INDEX
+    </div>
+
+    <div id="lxr-nav-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; flex-direction: column; padding: 40px; box-sizing: border-box; font-family: 'Courier New', monospace; color: #fff; overflow-y: auto;">
+        <div style="border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <span>LXR_SYSTEM_DIRECTORY</span>
+            <span onclick="document.getElementById('lxr-nav-overlay').style.display='none'" style="cursor: pointer;">[ CLOSE X ]</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <a href="index.html" style="color: #fff; text-decoration: none; display: block; padding: 10px; border: 1px solid #fff;">&lt; RETURN TO HOME</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('lxr-nav-trigger').addEventListener('click', function() {
+            document.getElementById('lxr-nav-overlay').style.display = 'flex';
+        });
+    </script>
+
+</body>
+</html>

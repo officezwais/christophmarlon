@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | 13. OBJECT</title>
+
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <style>
+        html { display: none; }
+
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            background-color: #000; /* Black void background */
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Start from top so we can scroll */
+            box-sizing: border-box;
+        }
+
+        /* --- THE PAPER DOCUMENT --- */
+        .paper {
+            background-color: #fff;
+            width: 100%;
+            max-width: 900px; /* A4-ish ratio */
+            min-height: 1200px;
+            padding: 60px;
+            box-sizing: border-box;
+            color: #000;
+            position: relative;
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- HEADER INFO --- */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .contact-info strong {
+            font-size: 1.2rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .roles {
+            text-align: right;
+            font-size: 1.2rem;
+            line-height: 1.2;
+        }
+
+        /* --- BIG TITLE --- */
+        h1.main-title {
+            font-size: clamp(4rem, 10vw, 8rem);
+            font-weight: 500; /* Helvetica standard weight looks bold at this size */
+            letter-spacing: -3px;
+            margin: 0 0 50px 0;
+            line-height: 0.8;
+        }
+
+        /* --- SECTION STYLES --- */
+        .section-block {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 500;
+            margin: 0 0 15px 0;
+            letter-spacing: -0.5px;
+        }
+
+        /* The List Items (Job / Education) */
+        .list-item {
+            border-top: 1px solid #ccc;
+            padding: 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        
+        /* Remove top border for first item if desired, 
+           but reference shows lines between. 
+           Let's adjust to match reference: Line appears AFTER content? 
+           Reference image actually has lines separating items cleanly. */
+        
+        .role-title {
+            font-weight: 400;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+
+        .role-desc {
+            font-size: 0.85rem;
+            color: #555;
+            max-width: 70%;
+        }
+
+        .date {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* --- BOTTOM AREA (Languages / Skills / Photo) --- */
+        .bottom-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two main columns */
+            gap: 40px;
+            margin-top: 60px;
+            border-top: 1px solid #000;
+            padding-top: 40px;
+        }
+
+        .col-left {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Language Mini-Grid */
+        .lang-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            font-size: 0.9rem;
+        }
+        .lang-col strong { display: block; margin-bottom: 10px; font-size: 1.1rem; font-weight: 500;}
+
+        /* Skills List */
+        .skills-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Photo Column */
+        .col-right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+        }
+
+        .photo-wrapper {
+            width: 250px;
+            height: 320px;
+            background-color: #eee;
+            overflow: hidden;
+        }
+
+        .photo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(20%);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .paper { padding: 30px; width: 100%; }
+            .bottom-grid { grid-template-columns: 1fr; }
+            .col-right { justify-content: flex-start; }
+            .header-top { flex-direction: column; gap: 20px; }
+            .roles { text-align: left; }
+            .list-item { flex-direction: column; gap: 5px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="paper">
+        
+        <header class="header-top">
+            <div class="contact-info">
+                <strong>LXR System</strong>
+                lxr.system@directory.com<br>
+                LinkedIn: LXR_Global
+            </div>
+            <div class="roles">
+                Designer<br>
+                Artist<br>
+                Videographer
+            </div>
+        </header>
+
+        <h1 class="main-title">Resume</h1>
+
+        <section class="section-block">
+            <h2>Experience</h2>
+            
+            <div class="list-item">
+                <div style="width: 100%">
+                    <div class="role-title">Print management</div>
+                    <div class="role-desc">Net accumquiam reiusant quiduntiam vollaud itatur ud itatur</div>
+                </div>
+                <div class="date">2015-2020</div>
+            </div>
+
+            <div class="list-item">
+                <div style="width: 100%">
+                    <div class="role-title">Art Director</div>
+                    <div class="role-desc">Net accumquiam reiusant quiduntiam vollaud itatur ud itatur</div>
+                </div>
+                <div class="date">2020-2024</div>
+            </div>
+
+            <div class="list-item">
+                <div style="width: 100%">
+                    <div class="role-title">Freelance System Architect</div>
+                    <div class="role-desc">Net accumquiam reiusant quiduntiam vollaud itatur ud itatur</div>
+                </div>
+                <div class="date">2024-PRES</div>
+            </div>
+        </section>
+
+        <section class="section-block">
+            <h2>Education</h2>
+            <div class="list-item" style="border-bottom: 1px solid #ccc;">
+                <div style="width: 100%">
+                    <div class="role-title">Master Graphic Design</div>
+                    <div class="role-desc">University of Digital Arts</div>
+                </div>
+                <div class="date">2015-2020</div>
+            </div>
+        </section>
+
+        <div class="bottom-grid">
+            
+            <div class="col-left">
+                
+                <div class="section-block">
+                    <h2>Languages</h2>
+                    <div class="lang-grid">
+                        <div class="lang-col">
+                            <strong>Fluent</strong>
+                            English<br>French<br>HTML/CSS
+                        </div>
+                        <div class="lang-col">
+                            <strong>Basics</strong>
+                            Portuguese<br>Spanish<br>Python
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-block">
+                    <h2>Skill Technical (Soft)</h2>
+                    <div class="skills-container">
+                        <div>
+                            Art Direction<br>
+                            Video editing<br>
+                            NFT<br>
+                            Procedural Artwork<br>
+                            Image making<br>
+                            Typography<br>
+                            Social media<br>
+                            Content creating
+                        </div>
+                        <div>
+                            Adobe Premier pro<br>
+                            Adobe illustrator<br>
+                            Adobe Photoshop<br>
+                            Adobe indesign<br>
+                            Adobe XD<br>
+                            Adobe After Effects<br>
+                            3d software<br>
+                            Blender<br>
+                            C4D<br>
+                            Procreate
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-right">
+                <div class="photo-wrapper">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="Portrait">
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="lxr-nav-trigger" style="position: fixed; top: 20px; right: 20px; z-index: 99999; cursor: pointer; mix-blend-mode: difference; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: bold; border: 1px solid white; padding: 5px 10px; background: black; text-transform: uppercase; font-size: 12px;">
+        [ + ] INDEX
+    </div>
+
+    <div id="lxr-nav-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; flex-direction: column; padding: 40px; box-sizing: border-box; font-family: 'Courier New', monospace; color: #fff; overflow-y: auto;">
+        <div style="border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <span>LXR_SYSTEM_DIRECTORY</span>
+            <span onclick="document.getElementById('lxr-nav-overlay').style.display='none'" style="cursor: pointer;">[ CLOSE X ]</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <a href="index.html" style="color: #fff; text-decoration: none; display: block; padding: 10px; border: 1px solid #fff;">&lt; RETURN TO HOME</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('lxr-nav-trigger').addEventListener('click', function() {
+            document.getElementById('lxr-nav-overlay').style.display = 'flex';
+        });
+    </script>
+
+</body>
+</html>

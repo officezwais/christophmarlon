@@ -105,35 +105,14 @@
     </style>
 </head>
 <body>
-
-    <div class="modal" id="system-dialog">
-        <div class="icon-container">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                <path d="M12 7V13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                <circle cx="12" cy="16.5" r="1" fill="currentColor"/>
-            </svg>
-        </div>
-        
-        <h1>Connection Required</h1>
-        <p>The routing array has been reset. A manual reboot is required to access the network.</p>
-        
-        <button class="btn" onclick="launchRandomPage()">Reboot System</button>
-    </div>
-
     <script>
         // --- 1. THE LIST OF 10 PAGES (Strictly 10) ---
-        const allPages = [
-            'page1.html', 
+        const allPages = [ 
             'page2.html', 
             'page3.html', 
-            'page4.html', 
-            'page5.html',
             'page6.html', 
-            'page7.html', 
-            'page8.html', 
             'page9.html', 
-            'page10.html'
+            'page15.html', 
         ];
 
         function launchRandomPage() {

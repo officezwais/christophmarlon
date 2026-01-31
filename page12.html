@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LXR | 12. CAPTCHA</title>
+
+    <script>
+        if (sessionStorage.getItem('allow_access') === 'yes') {
+            sessionStorage.removeItem('allow_access');
+            document.documentElement.style.display = 'block';
+        } else {
+            var path = window.location.pathname;
+            var pageName = path.split("/").pop();
+            sessionStorage.setItem('last_visited_page', pageName);
+            document.documentElement.style.display = 'none';
+            window.location.replace('index.html');
+        }
+    </script>
+
+    <style>
+        html { display: none; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            color: white;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+            background-color: #000;
+        }
+
+        /* --- BACKGROUND IMAGE --- */
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Close-up portrait similar to reference */
+            background-image: url('https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80');
+            background-size: cover;
+            background-position: center 30%; /* Focus on face */
+            z-index: 0;
+            /* Slight dim to make text pop */
+            filter: brightness(0.9);
+        }
+
+        /* --- LAYOUT CONTAINER --- */
+        .ui-layer {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px 40px;
+            box-sizing: border-box;
+        }
+
+        /* --- TOP NAVIGATION --- */
+        .top-nav {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            font-size: clamp(1.2rem, 3vw, 2.5rem);
+            font-weight: 700;
+            flex-wrap: wrap;
+            line-height: 1.1;
+        }
+
+        .nav-item {
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+        .nav-item:hover { opacity: 0.7; }
+
+        .small-label {
+            font-size: 0.8rem;
+            font-weight: 400;
+            opacity: 0.8;
+            margin: 0 5px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* --- CENTER DESCRIPTION --- */
+        .center-desc {
+            font-size: 0.85rem;
+            line-height: 1.4;
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        /* --- BOTTOM SCATTERED LINKS --- */
+        .bottom-links {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            justify-content: center;
+            gap: 2vw;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .big-link {
+            font-size: clamp(1.5rem, 4vw, 3.5rem);
+            font-weight: 700;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .big-link:hover {
+            transform: scale(1.05);
+            text-decoration: underline;
+        }
+
+        .tiny-tag {
+            font-size: 0.7rem;
+            font-weight: 400;
+            font-family: 'Courier New', monospace;
+            opacity: 0.8;
+            transform: translateY(-5px);
+        }
+
+        /* --- CART ICON --- */
+        .cart-icon {
+            position: fixed;
+            top: 30px;
+            right: 40px;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 20;
+            backdrop-filter: blur(5px);
+        }
+        
+        .cart-count { font-size: 0.8rem; margin-left: 5px; }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .ui-layer { padding: 20px; }
+            .top-nav { font-size: 1.5rem; }
+            .center-desc { top: 25%; width: 90%; font-size: 0.7rem; }
+            .bottom-links { justify-content: flex-start; }
+            .big-link { font-size: 1.8rem; }
+            .cart-icon { top: 20px; right: 20px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-image"></div>
+
+    <div class="cart-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M16 6V4a4 4 0 0 0-8 0v2H4v16h16V6h-4zm-6-2a2 2 0 0 1 4 0v2h-4V4zm8 16H6V8h12v12z"/></svg>
+        <span class="cart-count">(0)</span>
+    </div>
+
+    <div class="ui-layer">
+        
+        <div class="top-nav">
+            <div class="nav-item">Phamilia</div>
+            <span class="small-label">Retail &rarr;</span>
+            <div class="nav-item">Store</div>
+            <span class="small-label">Work &rarr;</span>
+            <div class="nav-item">Office</div>
+            <span class="small-label">Common</span>
+            <div class="nav-item">Space</div>
+        </div>
+
+        <div class="center-desc">
+            A creative house of brands founded by LXR System & Mariana Garcia with headquarters in Tampiquito, San Pedro (MEX). Working globally through multiple channels: (1) a concept store + bookstore + online store, (2) a creative services office & photography studio + common space for friends and phamilia.<br><br>
+            Thank you, Gracias, Merci, Obrigado, ありがとう
+        </div>
+
+        <div class="bottom-links">
+            
+            <div class="big-link">
+                <span class="tiny-tag">Atmospheres &rarr;</span>
+                Aphile
+            </div>
+
+            <div class="big-link">
+                <span class="tiny-tag">Book &rarr;</span>
+                P Magazine
+            </div>
+
+            <div class="big-link">
+                <span class="tiny-tag">Creative &rarr;</span>
+                &reg; Rik Bracho
+            </div>
+
+            <div class="big-link">
+                <span class="tiny-tag">Cameras &rarr;</span>
+                Archivo
+            </div>
+
+            <div class="big-link">
+                <span class="tiny-tag">Zine &rarr;</span>
+                Documento
+            </div>
+
+            <div class="big-link">
+                <span class="tiny-tag">Photography &rarr;</span>
+                Mariana Garc&iacute;a
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="lxr-nav-trigger" style="position: fixed; top: 20px; right: 100px; z-index: 99999; cursor: pointer; mix-blend-mode: difference; color: white; font-family: 'Helvetica Neue', sans-serif; font-weight: bold; border: 1px solid white; padding: 5px 10px; background: black; text-transform: uppercase; font-size: 12px;">
+        [ + ] INDEX
+    </div>
+
+    <div id="lxr-nav-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 99998; flex-direction: column; padding: 40px; box-sizing: border-box; font-family: 'Courier New', monospace; color: #fff; overflow-y: auto;">
+        <div style="border-bottom: 1px solid #333; padding-bottom: 20px; margin-bottom: 20px; display: flex; justify-content: space-between;">
+            <span>LXR_SYSTEM_DIRECTORY</span>
+            <span onclick="document.getElementById('lxr-nav-overlay').style.display='none'" style="cursor: pointer;">[ CLOSE X ]</span>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <a href="index.html" style="color: #fff; text-decoration: none; display: block; padding: 10px; border: 1px solid #fff;">&lt; RETURN TO HOME</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('lxr-nav-trigger').addEventListener('click', function() {
+            document.getElementById('lxr-nav-overlay').style.display = 'flex';
+        });
+    </script>
+
+</body>
+</html>
